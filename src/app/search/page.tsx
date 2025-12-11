@@ -203,6 +203,8 @@ function SearchPageContent() {
       }));
     }
 
+    console.log('📍 User Location:', userLocation);
+
     return businesses.map((business) => {
       let businessLat: number | null = null;
       let businessLon: number | null = null;
@@ -212,9 +214,10 @@ function SearchPageContent() {
       if (pattern1) {
         businessLat = parseFloat(pattern1[1]);
         businessLon = parseFloat(pattern1[2]);
+        console.log(`✅ Pattern 1 matched for ${business.name}:`, businessLat, businessLon);
       }
 
-      // Pattern 2: "12.34, 56.78" (just coordinates)
+      // Pattern 2: "12.34, 56.78" (just coordinates at the end)
       if (!businessLat && business.location) {
         const coords = business.location.split(',').map(s => s.trim());
         if (coords.length >= 2) {
@@ -223,6 +226,7 @@ function SearchPageContent() {
           if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
             businessLat = lat;
             businessLon = lon;
+            console.log(`✅ Pattern 2 matched for ${business.name}:`, businessLat, businessLon);
           }
         }
       }
@@ -230,9 +234,11 @@ function SearchPageContent() {
       // Check if business has separate latitude/longitude fields
       if (!businessLat && (business as any).latitude) {
         businessLat = parseFloat((business as any).latitude);
+        console.log(`✅ Latitude field for ${business.name}:`, businessLat);
       }
       if (!businessLon && (business as any).longitude) {
         businessLon = parseFloat((business as any).longitude);
+        console.log(`✅ Longitude field for ${business.name}:`, businessLon);
       }
 
       if (businessLat && businessLon && !isNaN(businessLat) && !isNaN(businessLon)) {
@@ -242,12 +248,14 @@ function SearchPageContent() {
           businessLat,
           businessLon
         );
+        console.log(`📏 Distance for ${business.name}: ${distance.toFixed(2)}km`);
         return {
           ...business,
           calculatedDistance: distance,
         };
       }
       
+      console.log(`❌ No coordinates found for ${business.name}`);
       return {
         ...business,
         calculatedDistance: 999999,
@@ -355,7 +363,12 @@ function SearchPageContent() {
       }
 
       // Distance range filter
-      if (filters.distanceRange.length > 0 && business.calculatedDistance !== undefined && business.calculatedDistance < 999999) {
+      if (filters.distanceRange.length > 0 && userLocation) {
+        // If user has location but business doesn't have valid coordinates, exclude it
+        if (business.calculatedDistance === undefined || business.calculatedDistance >= 999999) {
+          return false;
+        }
+        
         let matchesDistance = false;
         
         if (filters.distanceRange.includes("1km") && business.calculatedDistance <= 1) {
@@ -374,7 +387,9 @@ function SearchPageContent() {
           matchesDistance = true;
         }
         
-        if (!matchesDistance) return false;
+        if (!matchesDistance) {
+          return false;
+        }
       }
 
       return true;
@@ -387,16 +402,37 @@ function SearchPageContent() {
   const sortedBusinesses = useMemo(() => {
     const sorted = [...filteredBusinesses];
     
+    console.log('🔄 Sorting businesses. Total:', sorted.length);
+    console.log('📊 Sort settings:', {
+      nearMeEnabled: filters.nearMe.includes("enabled"),
+      hasUserLocation: !!userLocation,
+      sortingOptions: filters.sorting
+    });
+    
     // If "Near Me" filter is enabled and user has location, sort by distance
     if (filters.nearMe.includes("enabled") && userLocation) {
-      sorted.sort((a, b) => (a.calculatedDistance || 999999) - (b.calculatedDistance || 999999));
+      console.log('📍 Sorting by distance (nearest first)');
+      sorted.sort((a, b) => {
+        const distA = a.calculatedDistance !== undefined ? a.calculatedDistance : 999999;
+        const distB = b.calculatedDistance !== undefined ? b.calculatedDistance : 999999;
+        console.log(`Comparing: ${a.name} (${distA.toFixed(2)}km) vs ${b.name} (${distB.toFixed(2)}km)`);
+        return distA - distB;
+      });
     } else if (filters.sorting.includes("highestRated")) {
+      console.log('⭐ Sorting by highest rated');
       sorted.sort((a, b) => b.rating - a.rating);
     } else if (filters.sorting.includes("mostReviewed")) {
+      console.log('💬 Sorting by most reviewed');
       sorted.sort((a, b) => b.reviews - a.reviews);
     } else if (filters.sorting.includes("alphabetical")) {
+      console.log('🔤 Sorting alphabetically');
       sorted.sort((a, b) => a.name.localeCompare(b.name));
     }
+    
+    console.log('✅ Sorted businesses:', sorted.slice(0, 5).map(b => ({
+      name: b.name,
+      distance: b.calculatedDistance ? `${b.calculatedDistance.toFixed(2)}km` : 'N/A'
+    })));
     
     return sorted;
   }, [filteredBusinesses, filters.sorting, filters.nearMe, userLocation]);
