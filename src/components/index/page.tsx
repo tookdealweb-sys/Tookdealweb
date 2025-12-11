@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Search,
@@ -24,6 +24,7 @@ import {
   Wrench,
   Loader2,
   LucideIcon,
+  Navigation,
 } from "lucide-react";
 import { useBusinessData } from "@/hooks/useBusinessData";
 import { Business } from "@/types/business";
@@ -32,6 +33,11 @@ interface Category {
   key: string;
   label: string;
   icon: LucideIcon;
+}
+
+interface UserLocation {
+  latitude: number;
+  longitude: number;
 }
 
 const categories: Category[] = [
@@ -48,23 +54,140 @@ const categories: Category[] = [
   { key: "beach", label: "Beach", icon: Waves },
 ];
 
+// Haversine formula to calculate distance between two coordinates
+function calculateDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distance in kilometers
+}
+
+// Extract coordinates from location string or geocode address
+async function getCoordinatesFromLocation(location: string): Promise<{ lat: number; lon: number } | null> {
+  // Check if location already has coordinates (format: "Address, City, lat:12.34, lon:56.78")
+  const latMatch = location.match(/lat:([\d.-]+)/);
+  const lonMatch = location.match(/lon:([\d.-]+)/);
+  
+  if (latMatch && lonMatch) {
+    return {
+      lat: parseFloat(latMatch[1]),
+      lon: parseFloat(lonMatch[1]),
+    };
+  }
+  
+  // If no coordinates, you could integrate a geocoding API here
+  // For now, return null if coordinates aren't in the string
+  return null;
+}
+
 export default function BusinessDirectory() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("rating");
   const [serviceMode, setServiceMode] = useState<string>("all");
   const [location, setLocation] = useState<string>("all");
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
+  const [locationLoading, setLocationLoading] = useState<boolean>(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   const router = useRouter();
 
   // Fetch data from Supabase
   const { businesses: businessData, loading, error } = useBusinessData();
 
+  // Get user's current location
+  const getUserLocation = () => {
+    setLocationLoading(true);
+    setLocationError(null);
+
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      setLocationLoading(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setLocationLoading(false);
+        // Automatically switch to location sorting when location is obtained
+        setSortBy("location");
+      },
+      (error) => {
+        let errorMessage = "Unable to retrieve your location";
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Location permission denied. Please enable location access.";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable.";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Location request timed out.";
+            break;
+        }
+        setLocationError(errorMessage);
+        setLocationLoading(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000, // Cache for 5 minutes
+      }
+    );
+  };
+
+  // Calculate distances for all businesses
+  const businessesWithDistance = useMemo(() => {
+    if (!businessData || !userLocation) return businessData || [];
+
+    return businessData.map((business) => {
+      // Try to extract coordinates from location string
+      const coords = business.location?.match(/lat:([\d.-]+).*lon:([\d.-]+)/);
+      
+      if (coords && coords[1] && coords[2]) {
+        const businessLat = parseFloat(coords[1]);
+        const businessLon = parseFloat(coords[2]);
+        const distance = calculateDistance(
+          userLocation.latitude,
+          userLocation.longitude,
+          businessLat,
+          businessLon
+        );
+        return {
+          ...business,
+          calculatedDistance: distance,
+        };
+      }
+      
+      // If no coordinates found, set a high distance value
+      return {
+        ...business,
+        calculatedDistance: 999999,
+      };
+    });
+  }, [businessData, userLocation]);
+
   // Filter and sort businesses
   const filteredBusinesses = useMemo(() => {
-    if (!businessData) return [];
+    if (!businessesWithDistance) return [];
 
-    let filtered = [...businessData];
+    let filtered = [...businessesWithDistance];
 
     // Filter by search term
     if (searchTerm) {
@@ -98,6 +221,11 @@ export default function BusinessDirectory() {
         case "name":
           return (a.name || "").localeCompare(b.name || "");
         case "location":
+          // Sort by calculated distance if available
+          if (userLocation) {
+            return (a.calculatedDistance || 999999) - (b.calculatedDistance || 999999);
+          }
+          // Fallback to alphabetical location sorting
           return (a.location || "").localeCompare(b.location || "");
         default:
           return 0;
@@ -105,23 +233,23 @@ export default function BusinessDirectory() {
     });
 
     return filtered;
-  }, [businessData, searchTerm, selectedCategory, sortBy, location]);
+  }, [businessesWithDistance, searchTerm, selectedCategory, sortBy, location, userLocation]);
 
   // Group businesses by category for section carousels
   const businessesByCategory = useMemo(() => {
-    if (!businessData) return {};
+    if (!businessesWithDistance) return {};
 
-    const grouped: Record<string, Business[]> = {};
-    businessData.forEach((business) => {
+    const grouped: Record<string, any[]> = {};
+    businessesWithDistance.forEach((business) => {
       if (!grouped[business.category]) {
         grouped[business.category] = [];
       }
       grouped[business.category].push(business);
     });
     return grouped;
-  }, [businessData]);
+  }, [businessesWithDistance]);
 
-  const BusinessCard = ({ business }: { business: Business }) => (
+  const BusinessCard = ({ business }: { business: any }) => (
     <div
       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group transform hover:-translate-y-1"
       onClick={() => router.push(`/business/${business.id}`)}
@@ -161,13 +289,13 @@ export default function BusinessDirectory() {
             </span>
             <span className="text-xs text-slate-500">({business.reviews})</span>
           </div>
-          {business.isOpen !== undefined && (
+          {business.isopen !== undefined && (
             <span
               className={`text-xs font-medium ${
-                business.isOpen ? "text-green-600" : "text-red-600"
+                business.isopen ? "text-green-600" : "text-red-600"
               }`}
             >
-              {business.isOpen ? "Open" : "Closed"}
+              {business.isopen ? "Open" : "Closed"}
             </span>
           )}
         </div>
@@ -177,6 +305,13 @@ export default function BusinessDirectory() {
             {business.location?.split(",")[0]}
           </span>
         </div>
+        {userLocation && business.calculatedDistance && business.calculatedDistance < 999999 && (
+          <div className="mt-1 text-xs text-blue-600 font-medium">
+            {business.calculatedDistance < 1
+              ? `${(business.calculatedDistance * 1000).toFixed(0)}m away`
+              : `${business.calculatedDistance.toFixed(1)}km away`}
+          </div>
+        )}
         <div className="mt-2 text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           View Details →
         </div>
@@ -189,7 +324,7 @@ export default function BusinessDirectory() {
     businesses,
   }: {
     title: string;
-    businesses: Business[];
+    businesses: any[];
   }) => {
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const itemsPerPage = 4;
@@ -400,13 +535,59 @@ export default function BusinessDirectory() {
           >
             <option value="rating">Sort by Rating</option>
             <option value="name">Sort by Name</option>
-            <option value="location">Sort by Location</option>
+            <option value="location">
+              {userLocation ? "Sort by Distance (Nearest)" : "Sort by Location"}
+            </option>
           </select>
+
+          {/* Location Button */}
+          <button
+            onClick={getUserLocation}
+            disabled={locationLoading}
+            className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors w-full sm:w-auto justify-center ${
+              userLocation
+                ? "bg-green-100 text-green-700 hover:bg-green-200"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {locationLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Getting Location...</span>
+              </>
+            ) : userLocation ? (
+              <>
+                <Navigation className="w-4 h-4" />
+                <span>Location Enabled</span>
+              </>
+            ) : (
+              <>
+                <Navigation className="w-4 h-4" />
+                <span>Enable Location</span>
+              </>
+            )}
+          </button>
 
           <div className="text-sm text-slate-600 font-medium sm:ml-auto text-center sm:text-left">
             {filteredBusinesses.length} businesses found
           </div>
         </div>
+
+        {/* Location Error Message */}
+        {locationError && (
+          <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+            <p className="text-amber-800 text-sm">{locationError}</p>
+          </div>
+        )}
+
+        {/* Location Success Message */}
+        {userLocation && !locationError && (
+          <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+            <p className="text-green-800 text-sm">
+              ✓ Location enabled! Businesses are now sorted by distance from your current location.
+            </p>
+          </div>
+        )}
 
         {/* Search Results */}
         {searchTerm && (
