@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, Suspense } from "react";
-import { Star, MapPin, Clock, Phone, Heart, MessageCircle, Filter, X, Search, Navigation, Loader2 } from "lucide-react";
+import { Star, MapPin, Clock, Phone, Heart, MessageCircle, Filter, X, Search, Navigation, Loader2, AlertCircle } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import SearchHeader from "@/components/header";
 import Footer from "@/components/footer";
@@ -28,7 +28,10 @@ interface Business {
   email: string;
   description: string;
   website: string;
+  latitude?: number;
+  longitude?: number;
   calculatedDistance?: number;
+  geocoded?: boolean;
 }
 
 interface UserLocation {
@@ -46,20 +49,7 @@ interface Filters {
   nearMe: string[];
 }
 
-interface FilterSectionProps {
-  title: string;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}
-
-interface CheckboxFilterProps {
-  filterType: keyof Filters;
-  value: string;
-  label: string;
-  checked: boolean;
-}
-
-// Available categories from add business page
+// Available categories
 const categories = [
   { value: 'restaurants', label: 'Restaurants' },
   { value: 'homeServices', label: 'Home Services' },
@@ -74,14 +64,9 @@ const categories = [
   { value: 'beach', label: 'Beach' },
 ];
 
-// Haversine formula to calculate distance between two coordinates
-function calculateDistance(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
-  const R = 6371; // Earth's radius in kilometers
+// Haversine formula
+function calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -91,7 +76,39 @@ function calculateDistance(
       Math.sin(dLon / 2) *
       Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c; // Distance in kilometers
+  return R * c;
+}
+
+// Geocoding function using Nominatim
+async function geocodeLocation(locationString: string) {
+  try {
+    // Add "India" to improve geocoding accuracy
+    const query = encodeURIComponent(`${locationString}, India`);
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${query}&limit=1`,
+      {
+        headers: {
+          'User-Agent': 'BusinessSearchApp/1.0'
+        }
+      }
+    );
+    
+    if (!response.ok) throw new Error('Geocoding failed');
+    
+    const data = await response.json();
+    
+    if (data && data.length > 0) {
+      return {
+        latitude: parseFloat(data[0].lat),
+        longitude: parseFloat(data[0].lon)
+      };
+    }
+    
+    return null;
+  } catch (error) {
+    console.error('Geocoding error for', locationString, ':', error);
+    return null;
+  }
 }
 
 function SearchPageContent() {
@@ -110,7 +127,10 @@ function SearchPageContent() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [businessesWithCoords, setBusinessesWithCoords] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
+  const [geocoding, setGeocoding] = useState(false);
+  const [geocodingProgress, setGeocodingProgress] = useState({ current: 0, total: 0 });
   const [error, setError] = useState<string | null>(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [whatsappTracking, setWhatsappTracking] = useState<{ [key: string]: boolean }>({});
@@ -136,12 +156,83 @@ function SearchPageContent() {
       if (fetchError) throw fetchError;
 
       setBusinesses(data || []);
+      
+      // Start geocoding if businesses don't have coordinates
+      if (data && data.length > 0) {
+        geocodeBusinesses(data);
+      }
     } catch (err) {
       console.error('Error fetching businesses:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
       setLoading(false);
     }
+  };
+
+  // Geocode all businesses that don't have coordinates
+  const geocodeBusinesses = async (businessList: Business[]) => {
+    setGeocoding(true);
+    setGeocodingProgress({ current: 0, total: businessList.length });
+    
+    const geocodedBusinesses: Business[] = [];
+    
+    for (let i = 0; i < businessList.length; i++) {
+      const business = businessList[i];
+      setGeocodingProgress({ current: i + 1, total: businessList.length });
+      
+      let businessLat: number | null = null;
+      let businessLon: number | null = null;
+      let alreadyHasCoords = false;
+
+      // Check if coordinates already exist in location string
+      const pattern1 = business.location?.match(/lat:([\d.-]+).*?lon:([\d.-]+)/i);
+      if (pattern1) {
+        businessLat = parseFloat(pattern1[1]);
+        businessLon = parseFloat(pattern1[2]);
+        alreadyHasCoords = true;
+      }
+
+      // Check if business has separate latitude/longitude fields
+      if (!businessLat && business.latitude) {
+        businessLat = business.latitude;
+        alreadyHasCoords = true;
+      }
+      if (!businessLon && business.longitude) {
+        businessLon = business.longitude;
+        alreadyHasCoords = true;
+      }
+
+      // If no coordinates found, geocode the location
+      if (!alreadyHasCoords && business.location) {
+        console.log(`🔍 Geocoding: ${business.name} - ${business.location}`);
+        const coords = await geocodeLocation(business.location);
+        
+        if (coords) {
+          businessLat = coords.latitude;
+          businessLon = coords.longitude;
+          console.log(`✅ Geocoded: ${business.name} -> ${businessLat}, ${businessLon}`);
+        } else {
+          console.log(`❌ Failed to geocode: ${business.name}`);
+        }
+        
+        // Rate limiting - wait 1 second between requests to respect Nominatim's usage policy
+        if (i < businessList.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+      
+      geocodedBusinesses.push({
+        ...business,
+        latitude: businessLat || undefined,
+        longitude: businessLon || undefined,
+        geocoded: !alreadyHasCoords && businessLat !== null
+      });
+    }
+    
+    setBusinessesWithCoords(geocodedBusinesses);
+    setGeocoding(false);
+    setLoading(false);
+    
+    console.log(`✅ Geocoding complete. ${geocodedBusinesses.filter(b => b.latitude).length}/${geocodedBusinesses.length} businesses have coordinates`);
   };
 
   // Get user's current location
@@ -162,11 +253,8 @@ function SearchPageContent() {
           longitude: position.coords.longitude,
         });
         setLocationLoading(false);
-        // Enable "Near Me" filter when location is obtained
-        setFilters(prev => ({
-          ...prev,
-          nearMe: ["enabled"]
-        }));
+        setFilters(prev => ({ ...prev, nearMe: ["enabled"] }));
+        console.log('📍 User location:', position.coords.latitude, position.coords.longitude);
       },
       (err) => {
         let errorMessage = "Unable to retrieve your location";
@@ -185,7 +273,7 @@ function SearchPageContent() {
         setLocationLoading(false);
       },
       {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
         timeout: 15000,
         maximumAge: 300000,
       }
@@ -194,74 +282,28 @@ function SearchPageContent() {
 
   // Calculate distances for all businesses
   const businessesWithDistance = useMemo(() => {
-    if (!businesses) return [];
+    if (!businessesWithCoords.length) return [];
 
     if (!userLocation) {
-      return businesses.map(business => ({
+      return businessesWithCoords.map(business => ({
         ...business,
         calculatedDistance: undefined,
       }));
     }
 
-    console.log('📍 User Location:', userLocation);
-
-    return businesses.map((business) => {
-      let businessLat: number | null = null;
-      let businessLon: number | null = null;
-
-      // Pattern 1: "lat:12.34, lon:56.78"
-      const pattern1 = business.location?.match(/lat:([\d.-]+).*?lon:([\d.-]+)/i);
-      if (pattern1) {
-        businessLat = parseFloat(pattern1[1]);
-        businessLon = parseFloat(pattern1[2]);
-        console.log(`✅ Pattern 1 matched for ${business.name}:`, businessLat, businessLon);
-      }
-
-      // Pattern 2: "12.34, 56.78" (just coordinates at the end)
-      if (!businessLat && business.location) {
-        const coords = business.location.split(',').map(s => s.trim());
-        if (coords.length >= 2) {
-          const lat = parseFloat(coords[coords.length - 2]);
-          const lon = parseFloat(coords[coords.length - 1]);
-          if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
-            businessLat = lat;
-            businessLon = lon;
-            console.log(`✅ Pattern 2 matched for ${business.name}:`, businessLat, businessLon);
-          }
-        }
-      }
-
-      // Check if business has separate latitude/longitude fields
-      if (!businessLat && (business as any).latitude) {
-        businessLat = parseFloat((business as any).latitude);
-        console.log(`✅ Latitude field for ${business.name}:`, businessLat);
-      }
-      if (!businessLon && (business as any).longitude) {
-        businessLon = parseFloat((business as any).longitude);
-        console.log(`✅ Longitude field for ${business.name}:`, businessLon);
-      }
-
-      if (businessLat && businessLon && !isNaN(businessLat) && !isNaN(businessLon)) {
+    return businessesWithCoords.map((business) => {
+      if (business.latitude && business.longitude) {
         const distance = calculateDistance(
           userLocation.latitude,
           userLocation.longitude,
-          businessLat,
-          businessLon
+          business.latitude,
+          business.longitude
         );
-        console.log(`📏 Distance for ${business.name}: ${distance.toFixed(2)}km`);
-        return {
-          ...business,
-          calculatedDistance: distance,
-        };
+        return { ...business, calculatedDistance: distance };
       }
-      
-      console.log(`❌ No coordinates found for ${business.name}`);
-      return {
-        ...business,
-        calculatedDistance: 999999,
-      };
+      return { ...business, calculatedDistance: 999999 };
     });
-  }, [businesses, userLocation]);
+  }, [businessesWithCoords, userLocation]);
 
   // Get search query from URL params
   useEffect(() => {
@@ -305,12 +347,8 @@ function SearchPageContent() {
         }),
       });
       
-      const result = await response.json();
-      
       if (response.ok) {
-        console.log('✅ WhatsApp click tracked:', result);
-      } else {
-        console.error('❌ Failed to track WhatsApp click:', result);
+        console.log('✅ WhatsApp click tracked');
       }
     } catch (error) {
       console.error('❌ Error tracking WhatsApp click:', error);
@@ -322,11 +360,10 @@ function SearchPageContent() {
     }
   };
 
-  // Filter businesses based on search query
+  // Filter businesses
   const filteredBusinesses = useMemo(() => {
     let filtered = businessesWithDistance;
 
-    // Search across all fields
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(business =>
@@ -339,33 +376,26 @@ function SearchPageContent() {
       );
     }
 
-    // Apply filters
     filtered = filtered.filter((business) => {
-      // Category filter
       if (filters.category.length > 0) {
         if (!filters.category.includes(business.category)) return false;
       }
 
-      // Rating filter
       if (filters.rating.length > 0) {
         if (filters.rating.includes("4up") && business.rating < 4) return false;
         if (filters.rating.includes("3up") && business.rating < 3) return false;
       }
 
-      // Price range filter
       if (filters.pricerange.length > 0) {
         if (!filters.pricerange.includes(business.pricerange)) return false;
       }
 
-      // Open now filter
       if (filters.openNow.includes("showOnlyOpen")) {
         if (!business.isopen) return false;
       }
 
-      // Distance range filter
       if (filters.distanceRange.length > 0 && userLocation) {
-        // If user has location but business doesn't have valid coordinates, exclude it
-        if (business.calculatedDistance === undefined || business.calculatedDistance >= 999999) {
+        if (!business.calculatedDistance || business.calculatedDistance >= 999999) {
           return false;
         }
         
@@ -387,52 +417,32 @@ function SearchPageContent() {
           matchesDistance = true;
         }
         
-        if (!matchesDistance) {
-          return false;
-        }
+        if (!matchesDistance) return false;
       }
 
       return true;
     });
 
     return filtered;
-  }, [businessesWithDistance, searchQuery, filters]);
+  }, [businessesWithDistance, searchQuery, filters, userLocation]);
 
   // Sort businesses
   const sortedBusinesses = useMemo(() => {
     const sorted = [...filteredBusinesses];
     
-    console.log('🔄 Sorting businesses. Total:', sorted.length);
-    console.log('📊 Sort settings:', {
-      nearMeEnabled: filters.nearMe.includes("enabled"),
-      hasUserLocation: !!userLocation,
-      sortingOptions: filters.sorting
-    });
-    
-    // If "Near Me" filter is enabled and user has location, sort by distance
     if (filters.nearMe.includes("enabled") && userLocation) {
-      console.log('📍 Sorting by distance (nearest first)');
       sorted.sort((a, b) => {
-        const distA = a.calculatedDistance !== undefined ? a.calculatedDistance : 999999;
-        const distB = b.calculatedDistance !== undefined ? b.calculatedDistance : 999999;
-        console.log(`Comparing: ${a.name} (${distA.toFixed(2)}km) vs ${b.name} (${distB.toFixed(2)}km)`);
+        const distA = a.calculatedDistance ?? 999999;
+        const distB = b.calculatedDistance ?? 999999;
         return distA - distB;
       });
     } else if (filters.sorting.includes("highestRated")) {
-      console.log('⭐ Sorting by highest rated');
       sorted.sort((a, b) => b.rating - a.rating);
     } else if (filters.sorting.includes("mostReviewed")) {
-      console.log('💬 Sorting by most reviewed');
       sorted.sort((a, b) => b.reviews - a.reviews);
     } else if (filters.sorting.includes("alphabetical")) {
-      console.log('🔤 Sorting alphabetically');
       sorted.sort((a, b) => a.name.localeCompare(b.name));
     }
-    
-    console.log('✅ Sorted businesses:', sorted.slice(0, 5).map(b => ({
-      name: b.name,
-      distance: b.calculatedDistance ? `${b.calculatedDistance.toFixed(2)}km` : 'N/A'
-    })));
     
     return sorted;
   }, [filteredBusinesses, filters.sorting, filters.nearMe, userLocation]);
@@ -466,7 +476,7 @@ function SearchPageContent() {
     setCurrentPage(1);
   };
 
-  const FilterSection: React.FC<FilterSectionProps> = ({ title, children, defaultOpen = true }) => {
+  const FilterSection = ({ title, children, defaultOpen = true }: any) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
     
     return (
@@ -485,7 +495,7 @@ function SearchPageContent() {
     );
   };
 
-  const CheckboxFilter: React.FC<CheckboxFilterProps> = ({ filterType, value, label, checked }) => (
+  const CheckboxFilter = ({ filterType, value, label, checked }: any) => (
     <label className="flex items-center space-x-2 cursor-pointer">
       <input
         type="checkbox"
@@ -497,31 +507,15 @@ function SearchPageContent() {
     </label>
   );
 
-  // Get unique categories from results
-  const resultCategories = useMemo(() => {
-    const cats = new Set(filteredBusinesses.map(b => {
-      const cat = categories.find(c => c.value === b.category);
-      return cat?.label || b.category;
-    }));
-    return Array.from(cats).join(', ');
-  }, [filteredBusinesses]);
-
-  // Filter Sidebar Component
   const FilterSidebar = () => (
     <div className="bg-white rounded-lg shadow p-4 h-full overflow-y-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-semibold text-gray-900">Filter</h2>
         <div className="flex items-center gap-2">
-          <button
-            onClick={resetFilters}
-            className="text-blue-600 text-sm hover:underline"
-          >
+          <button onClick={resetFilters} className="text-blue-600 text-sm hover:underline">
             Reset
           </button>
-          <button
-            onClick={() => setIsMobileFilterOpen(false)}
-            className="lg:hidden text-gray-600 hover:text-gray-800"
-          >
+          <button onClick={() => setIsMobileFilterOpen(false)} className="lg:hidden text-gray-600 hover:text-gray-800">
             <X size={20} />
           </button>
         </div>
@@ -529,7 +523,6 @@ function SearchPageContent() {
 
       {/* Location Filter Section */}
       <FilterSection title="Location & Distance" defaultOpen={true}>
-        {/* Enable Location Button */}
         <button
           onClick={getUserLocation}
           disabled={locationLoading}
@@ -558,166 +551,94 @@ function SearchPageContent() {
         </button>
 
         {locationError && (
-          <div className="mb-3 bg-amber-50 border border-amber-200 rounded p-2">
+          <div className="mb-3 bg-amber-50 border border-amber-200 rounded p-2 flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
             <p className="text-xs text-amber-800">{locationError}</p>
           </div>
         )}
 
         {userLocation && (
-          <div className="mb-3 bg-green-50 border border-green-200 rounded p-2">
-            <p className="text-xs text-green-800">📍 Location enabled</p>
-          </div>
-        )}
-
-        {/* Near Me Filter */}
-        {userLocation && (
-          <CheckboxFilter
-            filterType="nearMe"
-            value="enabled"
-            label="🎯 Sort by Nearest First"
-            checked={filters.nearMe.includes("enabled")}
-          />
-        )}
-
-        {/* Distance Range Filters */}
-        {userLocation && (
           <>
+            <div className="mb-3 bg-green-50 border border-green-200 rounded p-2">
+              <p className="text-xs text-green-800">📍 Location enabled</p>
+            </div>
+
+            <CheckboxFilter
+              filterType="nearMe"
+              value="enabled"
+              label="🎯 Sort by Nearest First"
+              checked={filters.nearMe.includes("enabled")}
+            />
+
             <div className="text-xs text-gray-500 mt-3 mb-2 font-medium">Within Distance:</div>
-            <CheckboxFilter
-              filterType="distanceRange"
-              value="1km"
-              label="📍 Within 1 km"
-              checked={filters.distanceRange.includes("1km")}
-            />
-            <CheckboxFilter
-              filterType="distanceRange"
-              value="5km"
-              label="📍 Within 5 km"
-              checked={filters.distanceRange.includes("5km")}
-            />
-            <CheckboxFilter
-              filterType="distanceRange"
-              value="10km"
-              label="📍 Within 10 km"
-              checked={filters.distanceRange.includes("10km")}
-            />
-            <CheckboxFilter
-              filterType="distanceRange"
-              value="25km"
-              label="📍 Within 25 km"
-              checked={filters.distanceRange.includes("25km")}
-            />
-            <CheckboxFilter
-              filterType="distanceRange"
-              value="50km"
-              label="📍 Within 50 km"
-              checked={filters.distanceRange.includes("50km")}
-            />
+            <CheckboxFilter filterType="distanceRange" value="1km" label="📍 Within 1 km" checked={filters.distanceRange.includes("1km")} />
+            <CheckboxFilter filterType="distanceRange" value="5km" label="📍 Within 5 km" checked={filters.distanceRange.includes("5km")} />
+            <CheckboxFilter filterType="distanceRange" value="10km" label="📍 Within 10 km" checked={filters.distanceRange.includes("10km")} />
+            <CheckboxFilter filterType="distanceRange" value="25km" label="📍 Within 25 km" checked={filters.distanceRange.includes("25km")} />
+            <CheckboxFilter filterType="distanceRange" value="50km" label="📍 Within 50 km" checked={filters.distanceRange.includes("50km")} />
           </>
         )}
 
         {!userLocation && (
-          <p className="text-xs text-gray-500 italic">
-            Enable location to filter by distance
-          </p>
+          <p className="text-xs text-gray-500 italic">Enable location to filter by distance</p>
         )}
       </FilterSection>
 
       <FilterSection title="Category">
         {categories.map(cat => (
-          <CheckboxFilter
-            key={cat.value}
-            filterType="category"
-            value={cat.value}
-            label={cat.label}
-            checked={filters.category.includes(cat.value)}
-          />
+          <CheckboxFilter key={cat.value} filterType="category" value={cat.value} label={cat.label} checked={filters.category.includes(cat.value)} />
         ))}
       </FilterSection>
 
       <FilterSection title="Sorting Options">
-        <CheckboxFilter
-          filterType="sorting"
-          value="highestRated"
-          label="Highest Rated"
-          checked={filters.sorting.includes("highestRated")}
-        />
-        <CheckboxFilter
-          filterType="sorting"
-          value="mostReviewed"
-          label="Most Reviewed"
-          checked={filters.sorting.includes("mostReviewed")}
-        />
-        <CheckboxFilter
-          filterType="sorting"
-          value="alphabetical"
-          label="Alphabetical"
-          checked={filters.sorting.includes("alphabetical")}
-        />
+        <CheckboxFilter filterType="sorting" value="highestRated" label="Highest Rated" checked={filters.sorting.includes("highestRated")} />
+        <CheckboxFilter filterType="sorting" value="mostReviewed" label="Most Reviewed" checked={filters.sorting.includes("mostReviewed")} />
+        <CheckboxFilter filterType="sorting" value="alphabetical" label="Alphabetical" checked={filters.sorting.includes("alphabetical")} />
       </FilterSection>
 
       <FilterSection title="Ratings">
-        <CheckboxFilter
-          filterType="rating"
-          value="4up"
-          label="⭐⭐⭐⭐ & Up"
-          checked={filters.rating.includes("4up")}
-        />
-        <CheckboxFilter
-          filterType="rating"
-          value="3up"
-          label="⭐⭐⭐ & Up"
-          checked={filters.rating.includes("3up")}
-        />
+        <CheckboxFilter filterType="rating" value="4up" label="⭐⭐⭐⭐ & Up" checked={filters.rating.includes("4up")} />
+        <CheckboxFilter filterType="rating" value="3up" label="⭐⭐⭐ & Up" checked={filters.rating.includes("3up")} />
       </FilterSection>
 
       <FilterSection title="Price Range">
-        <CheckboxFilter
-          filterType="pricerange"
-          value="$"
-          label="$ - Budget"
-          checked={filters.pricerange.includes("$")}
-        />
-        <CheckboxFilter
-          filterType="pricerange"
-          value="$$"
-          label="$$ - Moderate"
-          checked={filters.pricerange.includes("$$")}
-        />
-        <CheckboxFilter
-          filterType="pricerange"
-          value="$$$"
-          label="$$$ - Expensive"
-          checked={filters.pricerange.includes("$$$")}
-        />
-        <CheckboxFilter
-          filterType="pricerange"
-          value="$$$$"
-          label="$$$$ - Luxury"
-          checked={filters.pricerange.includes("$$$$")}
-        />
+        <CheckboxFilter filterType="pricerange" value="$" label="$ - Budget" checked={filters.pricerange.includes("$")} />
+        <CheckboxFilter filterType="pricerange" value="$$" label="$$ - Moderate" checked={filters.pricerange.includes("$$")} />
+        <CheckboxFilter filterType="pricerange" value="$$$" label="$$$ - Expensive" checked={filters.pricerange.includes("$$$")} />
+        <CheckboxFilter filterType="pricerange" value="$$$$" label="$$$$ - Luxury" checked={filters.pricerange.includes("$$$$")} />
       </FilterSection>
 
       <FilterSection title="Open Now">
-        <CheckboxFilter
-          filterType="openNow"
-          value="showOnlyOpen"
-          label="Show only open businesses"
-          checked={filters.openNow.includes("showOnlyOpen")}
-        />
+        <CheckboxFilter filterType="openNow" value="showOnlyOpen" label="Show only open businesses" checked={filters.openNow.includes("showOnlyOpen")} />
       </FilterSection>
     </div>
   );
 
-  // Loading state
-  if (loading) {
+  // Loading/Geocoding state
+  if (loading || geocoding) {
     return (
       <div className="min-h-screen bg-gray-50">
         <SearchHeader/>
         <div className="max-w-7xl mx-auto px-4 py-12 pt-24">
-          <div className="flex justify-center items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <span className="ml-3 text-gray-600">Loading businesses...</span>
+          <div className="flex flex-col justify-center items-center">
+            <Loader2 className="w-12 h-12 animate-spin text-blue-600 mb-4" />
+            <p className="text-gray-700 font-medium">
+              {loading ? 'Loading businesses...' : 'Geocoding locations...'}
+            </p>
+            {geocoding && (
+              <>
+                <p className="text-sm text-gray-500 mt-2">
+                  Processing {geocodingProgress.current} of {geocodingProgress.total}
+                </p>
+                <div className="w-64 h-2 bg-gray-200 rounded-full mt-4 overflow-hidden">
+                  <div 
+                    className="h-full bg-blue-600 transition-all duration-300"
+                    style={{ width: `${(geocodingProgress.current / geocodingProgress.total) * 100}%` }}
+                  />
+                </div>
+                <p className="text-xs text-gray-400 mt-2">This may take a minute...</p>
+              </>
+            )}
           </div>
         </div>
         <Footer/>
@@ -734,10 +655,7 @@ function SearchPageContent() {
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
             <p className="text-red-800 font-semibold">Error loading businesses</p>
             <p className="text-red-600 mt-2">{error}</p>
-            <button 
-              onClick={fetchBusinesses}
-              className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-            >
+            <button onClick={fetchBusinesses} className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
               Try Again
             </button>
           </div>
@@ -760,7 +678,6 @@ function SearchPageContent() {
             Search Results for &quot;{searchQuery}&quot;
           </h1>
           
-          {/* Search Bar */}
           <form onSubmit={handleLocalSearch} className="mb-4">
             <div className="relative max-w-2xl">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -781,17 +698,10 @@ function SearchPageContent() {
               </button>
             </div>
           </form>
-          
-          {resultCategories && (
-            <p className="text-sm text-gray-600 mt-1">
-              Found in: {resultCategories}
-            </p>
-          )}
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-6">
-        {/* Mobile Filter Button */}
         <button
           onClick={() => setIsMobileFilterOpen(true)}
           className="lg:hidden fixed bottom-6 left-6 z-40 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
@@ -801,36 +711,29 @@ function SearchPageContent() {
         </button>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          {/* Desktop Sidebar - Filters */}
           <div className="hidden lg:block lg:col-span-1">
             <div className="sticky top-20">
               <FilterSidebar />
             </div>
           </div>
 
-          {/* Mobile Sidebar - Filters */}
           <div
             className={`lg:hidden fixed inset-0 z-50 transition-transform duration-300 ${
               isMobileFilterOpen ? 'translate-x-0' : '-translate-x-full'
             }`}
           >
-            {/* Overlay */}
             <div
               className={`absolute inset-0 bg-black transition-opacity duration-300 ${
                 isMobileFilterOpen ? 'opacity-50' : 'opacity-0'
               }`}
               onClick={() => setIsMobileFilterOpen(false)}
             />
-            
-            {/* Sidebar */}
             <div className="absolute left-0 top-0 bottom-0 w-80 max-w-[85vw] bg-white shadow-xl overflow-y-auto">
               <FilterSidebar />
             </div>
           </div>
 
-          {/* Right Side - Results */}
           <div className="lg:col-span-3">
-            {/* Results Info */}
             <div className="mb-6">
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm md:text-base text-blue-800">
@@ -847,7 +750,6 @@ function SearchPageContent() {
               </div>
             </div>
 
-            {/* Results */}
             <div className="space-y-4">
               {currentBusinesses.map((business) => (
                 <div 
@@ -876,22 +778,18 @@ function SearchPageContent() {
                       {business.location && (
                         <div className="flex items-center gap-1 text-sm text-gray-600">
                           <MapPin size={14} />
-                          <span>{business.location.split(',')[0]}</span>
+                          <span>{business.location}</span>
                         </div>
                       )}
                       
                       {userLocation && business.calculatedDistance && business.calculatedDistance < 999999 && (
-                        <div className="text-sm text-blue-600 font-medium">
+                        <div className="text-sm text-blue-600 font-medium flex items-center gap-1">
                           📍 {business.calculatedDistance < 1
                             ? `${(business.calculatedDistance * 1000).toFixed(0)}m away`
                             : `${business.calculatedDistance.toFixed(1)}km away`}
-                        </div>
-                      )}
-                      
-                      {business.contact && (
-                        <div className="flex items-center gap-1 text-sm text-gray-600">
-                          <Phone size={14} />
-                          <span>{business.contact}</span>
+                          {business.geocoded && (
+                            <span className="text-xs text-gray-400 ml-2">(auto-geocoded)</span>
+                          )}
                         </div>
                       )}
                       
@@ -948,7 +846,6 @@ function SearchPageContent() {
               ))}
             </div>
 
-            {/* No Results */}
             {currentBusinesses.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-gray-500 text-lg">
@@ -966,7 +863,6 @@ function SearchPageContent() {
               </div>
             )}
 
-            {/* Pagination */}
             {totalPages > 1 && (
               <div className="flex justify-center items-center gap-1 md:gap-2 mt-6 flex-wrap">
                 <button
