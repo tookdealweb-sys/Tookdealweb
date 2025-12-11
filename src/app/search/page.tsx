@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, Suspense } from "react";
-import { Star, MapPin, Clock, Phone, Heart, MessageCircle, Filter, X, Search } from "lucide-react";
+import { Star, MapPin, Clock, Phone, Heart, MessageCircle, Filter, X, Search, Navigation, Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import SearchHeader from "@/components/header";
 import Footer from "@/components/footer";
@@ -28,6 +28,12 @@ interface Business {
   email: string;
   description: string;
   website: string;
+  calculatedDistance?: number;
+}
+
+interface UserLocation {
+  latitude: number;
+  longitude: number;
 }
 
 interface Filters {
@@ -36,6 +42,8 @@ interface Filters {
   rating: string[];
   pricerange: string[];
   openNow: string[];
+  distanceRange: string[];
+  nearMe: string[];
 }
 
 interface FilterSectionProps {
@@ -66,6 +74,26 @@ const categories = [
   { value: 'beach', label: 'Beach' },
 ];
 
+// Haversine formula to calculate distance between two coordinates
+function calculateDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c; // Distance in kilometers
+}
+
 function SearchPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -76,7 +104,9 @@ function SearchPageContent() {
     sorting: ["highestRated"],
     rating: [],
     pricerange: [],
-    openNow: []
+    openNow: [],
+    distanceRange: [],
+    nearMe: []
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -84,6 +114,9 @@ function SearchPageContent() {
   const [error, setError] = useState<string | null>(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [whatsappTracking, setWhatsappTracking] = useState<{ [key: string]: boolean }>({});
+  const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
+  const [locationLoading, setLocationLoading] = useState<boolean>(false);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   // Fetch businesses from Supabase
   useEffect(() => {
@@ -102,7 +135,6 @@ function SearchPageContent() {
 
       if (fetchError) throw fetchError;
 
-      // Use data as-is since column names match
       setBusinesses(data || []);
     } catch (err) {
       console.error('Error fetching businesses:', err);
@@ -111,6 +143,117 @@ function SearchPageContent() {
       setLoading(false);
     }
   };
+
+  // Get user's current location
+  const getUserLocation = () => {
+    setLocationLoading(true);
+    setLocationError(null);
+
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      setLocationLoading(false);
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setLocationLoading(false);
+        // Enable "Near Me" filter when location is obtained
+        setFilters(prev => ({
+          ...prev,
+          nearMe: ["enabled"]
+        }));
+      },
+      (err) => {
+        let errorMessage = "Unable to retrieve your location";
+        switch (err.code) {
+          case err.PERMISSION_DENIED:
+            errorMessage = "Please allow location access in your browser settings";
+            break;
+          case err.POSITION_UNAVAILABLE:
+            errorMessage = "Location information is unavailable";
+            break;
+          case err.TIMEOUT:
+            errorMessage = "Location request timed out. Please try again";
+            break;
+        }
+        setLocationError(errorMessage);
+        setLocationLoading(false);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 15000,
+        maximumAge: 300000,
+      }
+    );
+  };
+
+  // Calculate distances for all businesses
+  const businessesWithDistance = useMemo(() => {
+    if (!businesses) return [];
+
+    if (!userLocation) {
+      return businesses.map(business => ({
+        ...business,
+        calculatedDistance: undefined,
+      }));
+    }
+
+    return businesses.map((business) => {
+      let businessLat: number | null = null;
+      let businessLon: number | null = null;
+
+      // Pattern 1: "lat:12.34, lon:56.78"
+      const pattern1 = business.location?.match(/lat:([\d.-]+).*?lon:([\d.-]+)/i);
+      if (pattern1) {
+        businessLat = parseFloat(pattern1[1]);
+        businessLon = parseFloat(pattern1[2]);
+      }
+
+      // Pattern 2: "12.34, 56.78" (just coordinates)
+      if (!businessLat && business.location) {
+        const coords = business.location.split(',').map(s => s.trim());
+        if (coords.length >= 2) {
+          const lat = parseFloat(coords[coords.length - 2]);
+          const lon = parseFloat(coords[coords.length - 1]);
+          if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
+            businessLat = lat;
+            businessLon = lon;
+          }
+        }
+      }
+
+      // Check if business has separate latitude/longitude fields
+      if (!businessLat && (business as any).latitude) {
+        businessLat = parseFloat((business as any).latitude);
+      }
+      if (!businessLon && (business as any).longitude) {
+        businessLon = parseFloat((business as any).longitude);
+      }
+
+      if (businessLat && businessLon && !isNaN(businessLat) && !isNaN(businessLon)) {
+        const distance = calculateDistance(
+          userLocation.latitude,
+          userLocation.longitude,
+          businessLat,
+          businessLon
+        );
+        return {
+          ...business,
+          calculatedDistance: distance,
+        };
+      }
+      
+      return {
+        ...business,
+        calculatedDistance: 999999,
+      };
+    });
+  }, [businesses, userLocation]);
 
   // Get search query from URL params
   useEffect(() => {
@@ -136,18 +279,12 @@ function SearchPageContent() {
   const handleWhatsAppClick = async (e: React.MouseEvent, business: Business) => {
     if (!business || whatsappTracking[business.id]) return;
     
-    // Don't prevent default - let the link work
-    // We're tracking in parallel
     setWhatsappTracking(prev => ({ ...prev, [business.id]: true }));
     
     try {
-      // Get current user session
       const { data: { session } } = await supabase.auth.getSession();
-      
-      // Get authentication token if available
       const token = session?.access_token;
       
-      // Track the click
       const response = await fetch('/api/admin/track-whatsapp', {
         method: 'POST',
         headers: {
@@ -169,11 +306,9 @@ function SearchPageContent() {
       }
     } catch (error) {
       console.error('❌ Error tracking WhatsApp click:', error);
-      // Don't block the user from proceeding
     } finally {
       setWhatsappTracking(prev => ({ ...prev, [business.id]: false }));
       
-      // Open WhatsApp
       const phone = business.contact.replace(/[^0-9+]/g, '');
       window.open(`https://wa.me/${phone.startsWith('+') ? phone : '+91' + phone}`, '_blank');
     }
@@ -181,7 +316,7 @@ function SearchPageContent() {
 
   // Filter businesses based on search query
   const filteredBusinesses = useMemo(() => {
-    let filtered = businesses;
+    let filtered = businessesWithDistance;
 
     // Search across all fields
     if (searchQuery) {
@@ -209,7 +344,7 @@ function SearchPageContent() {
         if (filters.rating.includes("3up") && business.rating < 3) return false;
       }
 
-      // Price range filter (exact match with database values)
+      // Price range filter
       if (filters.pricerange.length > 0) {
         if (!filters.pricerange.includes(business.pricerange)) return false;
       }
@@ -219,17 +354,43 @@ function SearchPageContent() {
         if (!business.isopen) return false;
       }
 
+      // Distance range filter
+      if (filters.distanceRange.length > 0 && business.calculatedDistance !== undefined && business.calculatedDistance < 999999) {
+        let matchesDistance = false;
+        
+        if (filters.distanceRange.includes("1km") && business.calculatedDistance <= 1) {
+          matchesDistance = true;
+        }
+        if (filters.distanceRange.includes("5km") && business.calculatedDistance <= 5) {
+          matchesDistance = true;
+        }
+        if (filters.distanceRange.includes("10km") && business.calculatedDistance <= 10) {
+          matchesDistance = true;
+        }
+        if (filters.distanceRange.includes("25km") && business.calculatedDistance <= 25) {
+          matchesDistance = true;
+        }
+        if (filters.distanceRange.includes("50km") && business.calculatedDistance <= 50) {
+          matchesDistance = true;
+        }
+        
+        if (!matchesDistance) return false;
+      }
+
       return true;
     });
 
     return filtered;
-  }, [businesses, searchQuery, filters]);
+  }, [businessesWithDistance, searchQuery, filters]);
 
   // Sort businesses
   const sortedBusinesses = useMemo(() => {
     const sorted = [...filteredBusinesses];
     
-    if (filters.sorting.includes("highestRated")) {
+    // If "Near Me" filter is enabled and user has location, sort by distance
+    if (filters.nearMe.includes("enabled") && userLocation) {
+      sorted.sort((a, b) => (a.calculatedDistance || 999999) - (b.calculatedDistance || 999999));
+    } else if (filters.sorting.includes("highestRated")) {
       sorted.sort((a, b) => b.rating - a.rating);
     } else if (filters.sorting.includes("mostReviewed")) {
       sorted.sort((a, b) => b.reviews - a.reviews);
@@ -238,7 +399,7 @@ function SearchPageContent() {
     }
     
     return sorted;
-  }, [filteredBusinesses, filters.sorting]);
+  }, [filteredBusinesses, filters.sorting, filters.nearMe, userLocation]);
 
   const totalPages = Math.ceil(sortedBusinesses.length / PAGE_SIZE);
   const currentBusinesses = sortedBusinesses.slice(
@@ -262,7 +423,9 @@ function SearchPageContent() {
       sorting: ["highestRated"],
       rating: [],
       pricerange: [],
-      openNow: []
+      openNow: [],
+      distanceRange: [],
+      nearMe: []
     });
     setCurrentPage(1);
   };
@@ -327,6 +490,102 @@ function SearchPageContent() {
           </button>
         </div>
       </div>
+
+      {/* Location Filter Section */}
+      <FilterSection title="Location & Distance" defaultOpen={true}>
+        {/* Enable Location Button */}
+        <button
+          onClick={getUserLocation}
+          disabled={locationLoading}
+          className={`w-full mb-3 px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors ${
+            userLocation
+              ? "bg-green-100 text-green-700 hover:bg-green-200 border border-green-300"
+              : "bg-blue-600 text-white hover:bg-blue-700"
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
+        >
+          {locationLoading ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="text-sm">Getting Location...</span>
+            </>
+          ) : userLocation ? (
+            <>
+              <Navigation className="w-4 h-4" />
+              <span className="text-sm">Location Enabled ✓</span>
+            </>
+          ) : (
+            <>
+              <Navigation className="w-4 h-4" />
+              <span className="text-sm">Enable My Location</span>
+            </>
+          )}
+        </button>
+
+        {locationError && (
+          <div className="mb-3 bg-amber-50 border border-amber-200 rounded p-2">
+            <p className="text-xs text-amber-800">{locationError}</p>
+          </div>
+        )}
+
+        {userLocation && (
+          <div className="mb-3 bg-green-50 border border-green-200 rounded p-2">
+            <p className="text-xs text-green-800">📍 Location enabled</p>
+          </div>
+        )}
+
+        {/* Near Me Filter */}
+        {userLocation && (
+          <CheckboxFilter
+            filterType="nearMe"
+            value="enabled"
+            label="🎯 Sort by Nearest First"
+            checked={filters.nearMe.includes("enabled")}
+          />
+        )}
+
+        {/* Distance Range Filters */}
+        {userLocation && (
+          <>
+            <div className="text-xs text-gray-500 mt-3 mb-2 font-medium">Within Distance:</div>
+            <CheckboxFilter
+              filterType="distanceRange"
+              value="1km"
+              label="📍 Within 1 km"
+              checked={filters.distanceRange.includes("1km")}
+            />
+            <CheckboxFilter
+              filterType="distanceRange"
+              value="5km"
+              label="📍 Within 5 km"
+              checked={filters.distanceRange.includes("5km")}
+            />
+            <CheckboxFilter
+              filterType="distanceRange"
+              value="10km"
+              label="📍 Within 10 km"
+              checked={filters.distanceRange.includes("10km")}
+            />
+            <CheckboxFilter
+              filterType="distanceRange"
+              value="25km"
+              label="📍 Within 25 km"
+              checked={filters.distanceRange.includes("25km")}
+            />
+            <CheckboxFilter
+              filterType="distanceRange"
+              value="50km"
+              label="📍 Within 50 km"
+              checked={filters.distanceRange.includes("50km")}
+            />
+          </>
+        )}
+
+        {!userLocation && (
+          <p className="text-xs text-gray-500 italic">
+            Enable location to filter by distance
+          </p>
+        )}
+      </FilterSection>
 
       <FilterSection title="Category">
         {categories.map(cat => (
@@ -543,6 +802,11 @@ function SearchPageContent() {
                   <span className="ml-2 text-blue-600 block md:inline mt-1 md:mt-0">
                     Showing {currentBusinesses.length} of {sortedBusinesses.length} businesses
                   </span>
+                  {userLocation && filters.nearMe.includes("enabled") && (
+                    <span className="block md:inline text-green-600 mt-1 md:mt-0 md:ml-2">
+                      📍 Sorted by nearest first
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
@@ -576,7 +840,15 @@ function SearchPageContent() {
                       {business.location && (
                         <div className="flex items-center gap-1 text-sm text-gray-600">
                           <MapPin size={14} />
-                          <span>{business.location}</span>
+                          <span>{business.location.split(',')[0]}</span>
+                        </div>
+                      )}
+                      
+                      {userLocation && business.calculatedDistance && business.calculatedDistance < 999999 && (
+                        <div className="text-sm text-blue-600 font-medium">
+                          📍 {business.calculatedDistance < 1
+                            ? `${(business.calculatedDistance * 1000).toFixed(0)}m away`
+                            : `${business.calculatedDistance.toFixed(1)}km away`}
                         </div>
                       )}
                       

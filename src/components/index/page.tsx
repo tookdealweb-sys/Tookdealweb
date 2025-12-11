@@ -80,8 +80,6 @@ function calculateDistance(
 export default function BusinessDirectory() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("rating");
-  const [serviceMode, setServiceMode] = useState<string>("all");
   const [location, setLocation] = useState<string>("all");
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [locationLoading, setLocationLoading] = useState<boolean>(false);
@@ -110,8 +108,6 @@ export default function BusinessDirectory() {
           longitude: position.coords.longitude,
         });
         setLocationLoading(false);
-        // Automatically switch to location sorting when location is obtained
-        setSortBy("location");
       },
       (err) => {
         let errorMessage = "Unable to retrieve your location";
@@ -144,7 +140,17 @@ export default function BusinessDirectory() {
 
   // Calculate distances for all businesses
   const businessesWithDistance = useMemo(() => {
-    if (!businessData || !userLocation) return businessData || [];
+    if (!businessData) return businessData || [];
+
+    // If no user location, just return businesses without distance
+    if (!userLocation) {
+      return businessData.map(business => ({
+        ...business,
+        calculatedDistance: undefined,
+      }));
+    }
+
+    console.log('User Location:', userLocation); // Debug log
 
     return businessData.map((business) => {
       // Try multiple patterns to extract coordinates from location string
@@ -156,6 +162,7 @@ export default function BusinessDirectory() {
       if (pattern1) {
         businessLat = parseFloat(pattern1[1]);
         businessLon = parseFloat(pattern1[2]);
+        console.log(`Pattern 1 matched for ${business.name}:`, businessLat, businessLon);
       }
 
       // Pattern 2: "12.34, 56.78" (just coordinates)
@@ -167,6 +174,7 @@ export default function BusinessDirectory() {
           if (!isNaN(lat) && !isNaN(lon) && lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180) {
             businessLat = lat;
             businessLon = lon;
+            console.log(`Pattern 2 matched for ${business.name}:`, businessLat, businessLon);
           }
         }
       }
@@ -174,9 +182,11 @@ export default function BusinessDirectory() {
       // Check if business has separate latitude/longitude fields
       if (!businessLat && (business as any).latitude) {
         businessLat = parseFloat((business as any).latitude);
+        console.log(`Latitude field for ${business.name}:`, businessLat);
       }
       if (!businessLon && (business as any).longitude) {
         businessLon = parseFloat((business as any).longitude);
+        console.log(`Longitude field for ${business.name}:`, businessLon);
       }
 
       if (businessLat && businessLon && !isNaN(businessLat) && !isNaN(businessLon)) {
@@ -186,12 +196,14 @@ export default function BusinessDirectory() {
           businessLat,
           businessLon
         );
+        console.log(`Distance calculated for ${business.name}: ${distance.toFixed(2)}km`);
         return {
           ...business,
           calculatedDistance: distance,
         };
       }
       
+      console.log(`No coordinates found for ${business.name}, location:`, business.location);
       // If no coordinates found, set a high distance value
       return {
         ...business,
@@ -230,27 +242,18 @@ export default function BusinessDirectory() {
       );
     }
 
-    // Sort businesses
+    // Sort businesses - Always sort by distance when user location is available
     filtered.sort((a, b) => {
-      switch (sortBy) {
-        case "rating":
-          return (b.rating || 0) - (a.rating || 0);
-        case "name":
-          return (a.name || "").localeCompare(b.name || "");
-        case "location":
-          // Sort by calculated distance if available
-          if (userLocation) {
-            return (a.calculatedDistance || 999999) - (b.calculatedDistance || 999999);
-          }
-          // Fallback to alphabetical location sorting
-          return (a.location || "").localeCompare(b.location || "");
-        default:
-          return 0;
+      // If user location is available, always sort by distance
+      if (userLocation) {
+        return (a.calculatedDistance || 999999) - (b.calculatedDistance || 999999);
       }
+      // Default sort by rating when no location
+      return (b.rating || 0) - (a.rating || 0);
     });
 
     return filtered;
-  }, [businessesWithDistance, searchTerm, selectedCategory, sortBy, location, userLocation]);
+  }, [businessesWithDistance, searchTerm, selectedCategory, location, userLocation]);
 
   // Group businesses by category for section carousels
   const businessesByCategory = useMemo(() => {
@@ -592,18 +595,6 @@ export default function BusinessDirectory() {
             })}
           </select>
 
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-slate-700 bg-white w-full sm:w-auto"
-          >
-            <option value="rating">⭐ Sort by Rating</option>
-            <option value="name">🔤 Sort by Name</option>
-            <option value="location">
-              {userLocation ? "📍 Sort by Distance" : "📍 Sort by Location"}
-            </option>
-          </select>
-
           {/* Location Button */}
           <button
             onClick={getUserLocation}
@@ -630,6 +621,15 @@ export default function BusinessDirectory() {
                 <span className="text-sm">Enable Location</span>
               </>
             )}
+          </button>
+
+          {/* Advanced Filters Button */}
+          <button
+            onClick={() => router.push('/search')}
+            className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors w-full sm:w-auto justify-center bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300"
+          >
+            <Search className="w-4 h-4" />
+            <span className="text-sm">Advanced Filters</span>
           </button>
 
           <div className="text-sm text-slate-600 font-medium sm:ml-auto text-center sm:text-left">
@@ -703,10 +703,7 @@ export default function BusinessDirectory() {
         )}
 
         {/* All Results when filtering */}
-        {(selectedCategory !== "all" ||
-          serviceMode !== "all" ||
-          location !== "all") &&
-          !searchTerm && (
+        {selectedCategory !== "all" && !searchTerm && (
             <div className="mb-12">
               <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">
                 Filtered Results
