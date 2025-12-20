@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Globe, Facebook, Twitter, Instagram } from "lucide-react";
+import { Globe, Facebook, Twitter, Instagram ,X} from "lucide-react";
 
 const Footer = () => {
   return (
@@ -23,7 +23,7 @@ const Footer = () => {
               ].map((item) => (
                 <li key={item}>
                   <Link
-                    href="#"
+                    href="/help"
                     className="text-gray-600 hover:text-gray-900 transition-colors duration-200"
                   >
                     {item}
@@ -50,7 +50,7 @@ const Footer = () => {
               ].map((item) => (
                 <li key={item}>
                   <Link
-                    href="#"
+                    href="/services"
                     className="text-gray-600 hover:text-gray-900 transition-colors duration-200"
                   >
                     {item}
@@ -73,7 +73,7 @@ const Footer = () => {
               ].map((item) => (
                 <li key={item}>
                   <Link
-                    href="#"
+                    href="/about"
                     className="text-gray-600 hover:text-gray-900 transition-colors duration-200"
                   >
                     {item}
@@ -113,28 +113,28 @@ const Footer = () => {
                   href="tel:+919876543210"
                   className="text-gray-900 font-medium hover:text-blue-600 transition-colors duration-200"
                 >
-                  +91 98765 43210
+                  +91 9048952562
                 </a>
               </div>
 
               {/* Social Icons */}
               <div className="flex items-center space-x-3">
-                <Link
+                {/* <Link
                   href="#"
                   aria-label="Facebook"
                   className="text-gray-400 hover:text-blue-600 transition-colors duration-200"
                 >
                   <Facebook className="h-5 w-5" />
-                </Link>
+                </Link> */}
                 <Link
-                  href="#"
+                  href="https://x.com/tookdeal"
                   aria-label="Twitter"
                   className="text-gray-400 hover:text-blue-400 transition-colors duration-200"
                 >
-                  <Twitter className="h-5 w-5" />
+                  <X className="h-5 w-5" />
                 </Link>
                 <Link
-                  href="#"
+                  href="https://www.instagram.com/took_deal?igsh=MXE4OHlwcHJmOWsxMw=="
                   aria-label="Instagram"
                   className="text-gray-400 hover:text-pink-600 transition-colors duration-200"
                 >

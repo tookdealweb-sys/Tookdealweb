@@ -216,12 +216,13 @@ export default function Header() {
             >
               Home
             </Link>
-            <div className="relative group">
-              <button className="flex items-center text-gray-700 hover:text-gray-900 font-medium transition-colors">
-                Services
-                <ChevronDown className="ml-1 h-4 w-4" />
-              </button>
-            </div>
+           
+            <Link
+              href="/services"
+              className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+            >
+              Services
+            </Link>
             <Link
               href="/help"
               className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
@@ -353,12 +354,14 @@ export default function Header() {
             >
               Home
             </Link>
-            <button
-              className="w-full text-left block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium rounded-lg transition-colors"
+            
+            <Link
+              href="/services"
               onClick={closeMobileMenu}
+              className="block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium rounded-lg transition-colors"
             >
               Services
-            </button>
+            </Link>
             <Link
               href="/help"
               onClick={closeMobileMenu}
@@ -377,20 +380,15 @@ export default function Header() {
             {/* Mobile Icons Section */}
             <div className="flex items-center justify-start space-x-3 px-4 py-3">
               {/* Notification Bell */}
-              <button className="p-2 text-gray-600 hover:text-gray-900 relative transition-colors rounded-lg hover:bg-gray-100">
-                <Bell className="h-6 w-6" />
-                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                  1
-                </span>
-              </button>
+              
 
               {/* Heart Icon */}
               <Link
                 href="/favorites"
-                className="p-2 text-gray-600 hover:text-gray-900 transition-colors rounded-lg hover:bg-gray-100"
+                className="p-2 text-gray-600 hover:text-gray-900 flex  transition-colors rounded-lg hover:bg-gray-100"
                 aria-label="Favorites"
-              >
-                <Heart className="h-6 w-6" />
+              >Favorites
+                <Heart className="h-6 w-6 p-1" />
               </Link>
             </div>
 
