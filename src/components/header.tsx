@@ -202,7 +202,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <img
-              className="h-10 w-auto object-contain hover:opacity-80 transition-opacity"
+              className="h-11 w-auto object-contain hover:opacity-80 transition-opacity"
               src="/images/Frame 1.png"
               alt="TookDeal Logo"
             />
