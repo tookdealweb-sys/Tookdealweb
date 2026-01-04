@@ -1,8 +1,8 @@
-// app/admin/business/add/page.tsx
+// app/admin/business/edit/[id]/page.tsx
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { Save, ArrowLeft, Loader2, Building2, Clock, Plus, Trash2 } from 'lucide-react';
 import ImageUpload, { MultiImageUpload } from '@/components/ImageUpload';
 import { supabase } from '@/lib/supabaseClient';
@@ -40,8 +40,12 @@ interface Schedule {
   [key: string]: TimeSlot[];
 }
 
-export default function AddBusinessPage() {
+export default function EditBusinessPage() {
   const router = useRouter();
+  const params = useParams();
+  const businessId = params?.id as string;
+
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [authChecking, setAuthChecking] = useState(true);
@@ -104,6 +108,56 @@ export default function AddBusinessPage() {
     checkAdminAuth();
   }, [router]);
 
+  useEffect(() => {
+    if (businessId && !authChecking) {
+      loadBusiness();
+    }
+  }, [businessId, authChecking]);
+
+  const loadBusiness = async () => {
+    setLoading(true);
+    try {
+      const { data, error: fetchError } = await supabase
+        .from('businesses')
+        .select('*')
+        .eq('id', businessId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      if (data) {
+        setFormData({
+          name: data.name || '',
+          category: data.category || 'restaurants',
+          rating: data.rating || 0,
+          reviews: data.reviews || 0,
+          location: data.location || '',
+          contact: data.contact || '',
+          email: data.email || '',
+          services: data.services || '',
+          description: data.description || '',
+          website: data.website || '',
+          businesstype: data.businesstype || '',
+          distance: data.distance || '',
+          pricerange: data.pricerange || '$$',
+          image: data.image || '',
+          images: data.images || [],
+        });
+
+        // Load schedule if it exists
+        if (data.schedule && typeof data.schedule === 'object') {
+          setSchedule(data.schedule);
+        }
+      }
+    } catch (err) {
+      console.error('Error loading business:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load business');
+      setTimeout(() => router.push('/admin'), 2000);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -156,7 +210,6 @@ export default function AddBusinessPage() {
     }));
   };
 
-  // Generate human-readable text for openhours column
   const generateOpenHoursText = () => {
     const lines: string[] = [];
     daysOfWeek.forEach(day => {
@@ -165,7 +218,6 @@ export default function AddBusinessPage() {
       } else {
         const times = schedule[day]
           .map(slot => {
-            // Convert 24h to 12h format
             const formatTime = (time: string) => {
               const [hours, minutes] = time.split(':');
               const h = parseInt(hours);
@@ -194,9 +246,9 @@ export default function AddBusinessPage() {
 
       const openHoursText = generateOpenHoursText();
 
-      const { data, error: insertError } = await supabase
+      const { error: updateError } = await supabase
         .from('businesses')
-        .insert([{
+        .update({
           name: formData.name,
           category: formData.category,
           rating: formData.rating,
@@ -205,36 +257,37 @@ export default function AddBusinessPage() {
           contact: formData.contact,
           email: formData.email,
           openhours: openHoursText,
-          schedule: schedule, // Store schedule as JSONB for auto open/close
+          schedule: schedule,
           services: formData.services,
           description: formData.description,
           website: formData.website,
           businesstype: formData.businesstype,
           distance: formData.distance,
           pricerange: formData.pricerange,
-          isopen: true, // Will be auto-updated by cron job based on schedule
           image: formData.image,
           images: formData.images,
-        }])
-        .select()
-        .single();
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', businessId);
 
-      if (insertError) throw insertError;
+      if (updateError) throw updateError;
 
-      router.push(`/business/${data.id}`);
+      router.push('/admin');
     } catch (err) {
-      console.error('Error saving business:', err);
-      setError(err instanceof Error ? err.message : 'Failed to save business');
+      console.error('Error updating business:', err);
+      setError(err instanceof Error ? err.message : 'Failed to update business');
       setSaving(false);
     }
   };
 
-  if (authChecking) {
+  if (authChecking || loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-10 h-10 animate-spin text-gray-700 mx-auto mb-3" />
-          <p className="text-gray-600 font-medium">Verifying access...</p>
+          <p className="text-gray-600 font-medium">
+            {authChecking ? 'Verifying access...' : 'Loading business...'}
+          </p>
         </div>
       </div>
     );
@@ -246,11 +299,11 @@ export default function AddBusinessPage() {
 
       <main className="max-w-4xl mx-auto px-6 py-8">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push('/admin')}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors mb-6 group"
         >
           <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          <span className="font-medium">Back</span>
+          <span className="font-medium">Back to Admin</span>
         </button>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 mb-6">
@@ -259,8 +312,8 @@ export default function AddBusinessPage() {
               <Building2 className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Add New Business</h1>
-              <p className="text-gray-600 text-sm mt-0.5">Create a new business with automatic open/close schedule</p>
+              <h1 className="text-2xl font-bold text-gray-900">Edit Business</h1>
+              <p className="text-gray-600 text-sm mt-0.5">Update business information and schedule</p>
             </div>
           </div>
         </div>
@@ -584,7 +637,7 @@ export default function AddBusinessPage() {
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
               type="button"
-              onClick={() => router.back()}
+              onClick={() => router.push('/admin')}
               className="px-6 py-2.5 border border-gray-300 rounded-xl text-gray-700 font-medium hover:bg-gray-50 transition-all"
             >
               Cancel
@@ -597,12 +650,12 @@ export default function AddBusinessPage() {
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Saving...
+                  Updating...
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  Save Business
+                  Update Business
                 </>
               )}
             </button>

@@ -130,12 +130,12 @@ export default function BusinessDirectory() {
         />
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="bg-white/90 backdrop-blur-sm rounded-full p-2">
-            <ExternalLink className="w-4 h-4 text-blue-600" />
+            <ExternalLink className="w-4 h-4 text-[#00d4ad]-600" />
           </div>
         </div>
       </div>
       <div className="p-4">
-        <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-blue-600 transition-colors duration-200 break-words">
+        <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-[#00d4ad]-600 transition-colors duration-200 break-words">
           {business.name}
         </h3>
         <div className="flex items-center justify-between">
@@ -162,7 +162,7 @@ export default function BusinessDirectory() {
             {business.location?.split(",")[0]}
           </span>
         </div>
-        <div className="mt-2 text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="mt-2 text-xs text-[#00d4ad]-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           View Details →
         </div>
       </div>
@@ -207,14 +207,14 @@ export default function BusinessDirectory() {
           <div className="flex gap-2">
             <button
               onClick={prevSlide}
-              className="p-2 rounded-full bg-slate-100 hover:bg-blue-100 hover:text-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-[#00d4ad]-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={businesses.length <= itemsPerPage}
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={nextSlide}
-              className="p-2 rounded-full bg-slate-100 hover:bg-blue-100 hover:text-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-[#00d4ad]-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={businesses.length <= itemsPerPage}
             >
               <ChevronRight className="w-5 h-5" />
@@ -242,7 +242,7 @@ export default function BusinessDirectory() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center overflow-x-hidden">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-[#00d4ad]-600 mx-auto mb-4" />
           <p className="text-slate-600 text-lg">Loading businesses...</p>
         </div>
       </div>
@@ -290,12 +290,12 @@ export default function BusinessDirectory() {
                   placeholder="Search for business..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-700 placeholder-slate-400"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2  text-slate-700 placeholder-slate-400"
                 />
               </div>
               <button
                 type="submit"
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center gap-2 whitespace-nowrap"
+                className="px-6 py-3 bg-[#00d4ad] text-white rounded-lg hover:bg-[#3d887a] transition-colors font-medium flex items-center gap-2 whitespace-nowrap"
               >
                 <Search className="w-5 h-5" />
                 <span className="hidden sm:inline">Search</span>
@@ -319,8 +319,8 @@ export default function BusinessDirectory() {
                 onClick={() => setSelectedCategory("all")}
                 className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 ${
                   selectedCategory === "all"
-                    ? "bg-blue-100 text-blue-600"
-                    : "text-slate-600 hover:bg-blue-50 hover:text-blue-600"
+                    ? "bg-[#00d4ad] text-[#00d4ad]-600"
+                    : "text-slate-600 hover:bg-[#00d4ad] hover:text-[#00d4ad]-600"
                 }`}
               >
                 <ShoppingCart className="w-6 h-6 mb-2" />
@@ -341,8 +341,8 @@ export default function BusinessDirectory() {
                     onClick={() => setSelectedCategory(category.key)}
                     className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 ${
                       selectedCategory === category.key
-                        ? "bg-blue-100 text-blue-600"
-                        : "text-slate-600 hover:bg-blue-50 hover:text-blue-600"
+                        ? "bg-[#00d4ad] text-[#00d4ad]-600"
+                        : "text-slate-600 hover:bg-[#00d4ad] hover:text-[#00d4ad]-600"
                     }`}
                   >
                     <IconComponent className="w-6 h-6 mb-2" />
@@ -364,7 +364,7 @@ export default function BusinessDirectory() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-slate-700 bg-white w-full sm:w-auto"
+            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad]-500 text-slate-700 bg-white w-full sm:w-auto"
           >
             <option value="all">All Categories</option>
             {availableCategories.map((cat) => {
@@ -397,7 +397,7 @@ export default function BusinessDirectory() {
           <div className="mb-12 ">
             <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6 break-words">
               Search Results for "
-              <span className="text-blue-600">{searchTerm}</span>"
+              <span className="text-[#00d4ad]-600">{searchTerm}</span>"
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {filteredBusinesses.slice(0, 8).map((business) => (
