@@ -329,13 +329,13 @@ export default function BusinessDetailPage() {
       {/* Success Message Toast */}
       {showFavoriteMessage && (
         <div className="fixed top-24 right-4 md:right-6 z-50 animate-slide-in-right max-w-[calc(100vw-2rem)]">
-          <div className="bg-green-500 text-white px-4 md:px-6 py-3 rounded-lg shadow-lg flex items-center gap-3">
+          <div className="bg-[#00d4ad] text-white px-4 md:px-6 py-3 rounded-lg shadow-lg flex items-center gap-3">
             <FaHeart className="text-xl flex-shrink-0" />
             <div className="min-w-0">
               <p className="font-semibold">Added to Favorites!</p>
               <button
                 onClick={() => router.push("/favorites")}
-                className="text-sm underline hover:text-green-100"
+                className="text-sm underline hover:text-[#00d4ad]"
               >
                 View all favorites →
               </button>
@@ -393,7 +393,7 @@ export default function BusinessDetailPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={handleWhatsAppClick}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-500 text-white px-4 md:px-6 py-2 rounded-md text-sm font-medium shadow hover:from-green-700 hover:to-green-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00d4ad] to-[#00d4ad] text-white px-4 md:px-6 py-2 rounded-md text-sm font-medium shadow hover:from-[#00d4ad] hover:to-[#00d4ad] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <FaWhatsapp className="text-lg" />
                     {whatsappTracking ? 'Connecting...' : 'WhatsApp'}

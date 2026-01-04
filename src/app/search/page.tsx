@@ -261,7 +261,7 @@ function SearchPageContent() {
         type="checkbox"
         checked={checked}
         onChange={(e) => handleFilterChange(filterType, value, e.target.checked)}
-        className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+        className="w-4 h-4 text-[#00d4ad] border-gray-300 rounded focus:ring-[#00d4ad]"
       />
       <span className="text-sm text-gray-700">{label}</span>
     </label>
@@ -272,7 +272,7 @@ function SearchPageContent() {
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-semibold text-gray-900">Filter</h2>
         <div className="flex items-center gap-2">
-          <button onClick={resetFilters} className="text-blue-600 text-sm hover:underline">
+          <button onClick={resetFilters} className="text-[#00d4ad] text-sm hover:underline">
             Reset
           </button>
           <button onClick={() => setIsMobileFilterOpen(false)} className="lg:hidden text-gray-600 hover:text-gray-800">
@@ -318,7 +318,7 @@ function SearchPageContent() {
         <SearchHeader/>
         <div className="max-w-7xl mx-auto px-4 py-12 pt-24">
           <div className="flex flex-col justify-center items-center">
-            <Loader2 className="w-12 h-12 animate-spin text-blue-600 mb-4" />
+            <Loader2 className="w-12 h-12 animate-spin text-[#00d4ad] mb-4" />
             <p className="text-gray-700 font-medium">Loading businesses...</p>
           </div>
         </div>
@@ -370,11 +370,11 @@ function SearchPageContent() {
                 onChange={(e) => setLocalSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleLocalSearch()}
                 placeholder="Search businesses, services, locations..."
-                className="block w-full pl-10 pr-20 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                className="block w-full pl-10 pr-20 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] focus:border-[#00d4ad] text-sm"
               />
               <button
                 onClick={handleLocalSearch}
-                className="absolute inset-y-0 right-0 px-4 py-2 m-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
+                className="absolute inset-y-0 right-0 px-4 py-2 m-1 bg-[#00d4ad] text-white rounded-md hover:bg-[#00d4ad] transition-colors text-sm font-medium"
               >
                 Search
               </button>
@@ -386,7 +386,7 @@ function SearchPageContent() {
       <div className="max-w-7xl mx-auto px-4 py-6">
         <button
           onClick={() => setIsMobileFilterOpen(true)}
-          className="lg:hidden fixed bottom-6 left-6 z-40 bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+          className="lg:hidden fixed bottom-6 left-6 z-40 bg-[#00d4ad] text-white p-4 rounded-full shadow-lg hover:bg-[#00d4ad] transition-colors flex items-center gap-2"
         >
           <Filter size={20} />
           <span className="font-medium">Filters</span>
@@ -417,10 +417,10 @@ function SearchPageContent() {
 
           <div className="lg:col-span-3">
             <div className="mb-6">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm md:text-base text-blue-800">
+              <div className="bg-[#00d4ad]border border-[#00d4ad] rounded-lg p-4">
+                <p className="text-sm md:text-base text-[#00d4ad]">
                   <strong>Search Results for:</strong> &quot;{searchQuery}&quot; 
-                  <span className="ml-2 text-blue-600 block md:inline mt-1 md:mt-0">
+                  <span className="ml-2 text-[#00d4ad] block md:inline mt-1 md:mt-0">
                     Showing {currentBusinesses.length} of {sortedBusinesses.length} businesses
                   </span>
                 </p>
@@ -448,7 +448,7 @@ function SearchPageContent() {
                     </div>
                     
                     <div className="flex-1 space-y-2">
-                      <h3 className="text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                      <h3 className="text-lg font-semibold text-gray-900 hover:text-[#00d4ad] transition-colors">
                         {business.name}
                       </h3>
                       
@@ -468,9 +468,9 @@ function SearchPageContent() {
                       <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 text-sm">
                         {business.openhours && (
                           <div className="flex items-center gap-1">
-                            <Clock size={14} className={business.isopen ? "text-green-600" : "text-red-600"} />
-                            <span className={business.isopen ? "text-green-600" : "text-red-600"}>
-                              {business.isopen ? "Open" : "Closed"} - {business.openhours}
+                            <Clock size={14} className={business.isopen ? "text-[#00d4ad]" : "text-red-600"} />
+                            <span className={business.isopen ? "text-[#00d4ad]" : "text-red-600"}>
+                              {business.isopen ? "Open" : "Closed"} - {business.isopen}
                             </span>
                           </div>
                         )}
@@ -493,7 +493,7 @@ function SearchPageContent() {
                             handleWhatsAppClick(e, business);
                           }}
                           disabled={whatsappTracking[business.id]}
-                          className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-[#00d4ad] text-white rounded-md hover:bg-[#00d4ad] transition-colors text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <MessageCircle size={18} />
                           {whatsappTracking[business.id] ? 'Tracking...' : 'WhatsApp'}
@@ -522,7 +522,7 @@ function SearchPageContent() {
                 </p>
                 <button 
                   onClick={resetFilters}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                  className="mt-4 px-4 py-2 bg-[#00d4ad] text-white rounded hover:bg-[#00d4ad]"
                 >
                   Clear Filters
                 </button>
@@ -534,7 +534,7 @@ function SearchPageContent() {
                 <button
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
-                  className="px-2 md:px-3 py-2 text-sm md:text-base text-blue-600 hover:bg-blue-50 disabled:text-gray-400"
+                  className="px-2 md:px-3 py-2 text-sm md:text-base text-[#00d4ad] hover:bg-[#00d4ad]disabled:text-gray-400"
                 >
                   « Prev
                 </button>
@@ -545,8 +545,8 @@ function SearchPageContent() {
                     onClick={() => setCurrentPage(i + 1)}
                     className={`px-2 md:px-3 py-2 text-sm md:text-base rounded ${
                       currentPage === i + 1
-                        ? "bg-blue-600 text-white"
-                        : "text-blue-600 hover:bg-blue-50"
+                        ? "bg-[#00d4ad] text-white"
+                        : "text-[#00d4ad] hover:bg-[#00d4ad]"
                     }`}
                   >
                     {i + 1}
@@ -556,7 +556,7 @@ function SearchPageContent() {
                 <button
                   onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-2 md:px-3 py-2 text-sm md:text-base text-blue-600 hover:bg-blue-50 disabled:text-gray-400"
+                  className="px-2 md:px-3 py-2 text-sm md:text-base text-[#00d4ad] hover:bg-[#00d4ad]disabled:text-gray-400"
                 >
                   Next »
                 </button>
@@ -577,7 +577,7 @@ export default function DynamicSearchPage() {
         <SearchHeader/>
         <div className="max-w-7xl mx-auto px-4 py-12 pt-24">
           <div className="flex justify-center items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00d4ad]"></div>
             <span className="ml-3 text-gray-600">Loading search...</span>
           </div>
         </div>

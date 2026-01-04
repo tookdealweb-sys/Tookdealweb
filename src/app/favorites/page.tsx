@@ -159,7 +159,7 @@ export default function FavoritesPage() {
         className="p-4 cursor-pointer"
         onClick={() => router.push(`/business/${business.id}`)}
       >
-        <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-blue-600 transition-colors duration-200">
+        <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-[#00d4ad] transition-colors duration-200">
           {business.name}
         </h3>
         
@@ -182,7 +182,7 @@ export default function FavoritesPage() {
         </div>
         
         <div className="mt-3 flex items-center justify-between">
-          <span className="text-xs text-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <span className="text-xs text-[#00d4ad] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             View Details →
           </span>
           <button
@@ -246,7 +246,7 @@ export default function FavoritesPage() {
         {loading && (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
+              <Loader2 className="w-12 h-12 animate-spin text-[#00d4ad] mx-auto mb-4" />
               <p className="text-slate-600 text-lg">Loading your favorites...</p>
             </div>
           </div>
@@ -262,7 +262,7 @@ export default function FavoritesPage() {
             </p>
             <button
               onClick={() => router.push('/')}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-[#00d4ad] text-white px-6 py-3 rounded-lg hover:bg-[#00d4ad] transition-colors"
             >
               Browse Businesses
             </button>

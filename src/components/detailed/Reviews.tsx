@@ -85,7 +85,7 @@ export default function Reviews({ items, businessId, onReviewAdded }: ReviewsPro
         <h3 className="text-2xl font-semibold">Customer Reviews</h3>
         <button
           onClick={() => setShowAddReview(!showAddReview)}
-          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
+          className="bg-[#00d4ad] text-white px-4 py-2 rounded-md hover:bg-[#00d4ad] text-sm font-medium"
         >
           {showAddReview ? "Cancel" : "Write a Review"}
         </button>
@@ -106,7 +106,7 @@ export default function Reviews({ items, businessId, onReviewAdded }: ReviewsPro
                 id="author"
                 value={formData.author}
                 onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00d4ad] focus:border-[#00d4ad]"
                 placeholder="Enter your name"
                 required
                 disabled={submitting}
@@ -149,7 +149,7 @@ export default function Reviews({ items, businessId, onReviewAdded }: ReviewsPro
                 value={formData.text}
                 onChange={(e) => setFormData({ ...formData, text: e.target.value })}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00d4ad] focus:border-[#00d4ad] resize-none"
                 placeholder="Share your experience..."
                 required
                 disabled={submitting}
@@ -160,7 +160,7 @@ export default function Reviews({ items, businessId, onReviewAdded }: ReviewsPro
             <button
               type="submit"
               disabled={submitting}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="bg-[#00d4ad] text-white px-6 py-2 rounded-md hover:bg-[#00d4ad] font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
               {submitting ? "Submitting..." : "Submit Review"}

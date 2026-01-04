@@ -207,7 +207,7 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00d4ad] mx-auto mb-4"></div>
           <p className="text-gray-600">Completing sign-in...</p>
         </div>
       </div>
@@ -285,7 +285,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-418f80-600"
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -301,7 +301,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => (window.location.href = "/forgotpassword")}
-                className="text-sm text-blue-600 hover:text-blue-500"
+                className="text-sm text-[#00d4ad] hover:text-[#418f80]"
               >
                 Forgot password?
               </button>
@@ -311,7 +311,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#00d4ad] hover:bg-[#418f80] text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? "Logging in..." : "Log In"}
             </button>
@@ -331,7 +331,7 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             type="button"
-            className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-gray-700 font-medium text-sm transition-colors duration-200 shadow-sm"
+            className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-white hover:bg-gray-418f80 border border-gray-300 rounded-lg text-gray-700 font-medium text-sm transition-colors duration-200 shadow-sm"
           >
             <svg
               width="18"
@@ -367,7 +367,7 @@ export default function LoginPage() {
               No account?{" "}
               <button
                 onClick={handlesignup}
-                className="text-blue-600 hover:text-blue-500 font-medium cursor-pointer"
+                className="text-[#00d4ad] hover:text-[#418f80] font-medium cursor-pointer"
               >
                 Create an account
               </button>
@@ -378,11 +378,11 @@ export default function LoginPage() {
           <div className="mt-8 text-center">
             <p className="text-xs text-gray-500">
               By signing up, you agree to our{" "}
-              <button className="text-blue-600 hover:text-blue-500">
+              <button className="text-[#00d4ad] hover:text-[#418f80]">
                 Terms
               </button>{" "}
               and{" "}
-              <button className="text-blue-600 hover:text-blue-500">
+              <button className="text-[#00d4ad] hover:text-[#418f80]">
                 Privacy
               </button>
               .

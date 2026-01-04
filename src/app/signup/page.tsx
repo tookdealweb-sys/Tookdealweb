@@ -99,7 +99,7 @@ export default function TookDealSignup() {
               onChange={handleInputChange}
               placeholder="Full name"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
             />
 
             {/* Email */}
@@ -110,7 +110,7 @@ export default function TookDealSignup() {
               onChange={handleInputChange}
               placeholder="Email"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
             />
 
             {/* Phone */}
@@ -120,7 +120,7 @@ export default function TookDealSignup() {
               value={formData.phone}
               onChange={handleInputChange}
               placeholder="Phone number"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
             />
 
             {/* Password */}
@@ -132,7 +132,7 @@ export default function TookDealSignup() {
                 onChange={handleInputChange}
                 placeholder="Password"
                 required
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
               />
               <button
                 type="button"
@@ -152,7 +152,7 @@ export default function TookDealSignup() {
                 onChange={handleInputChange}
                 placeholder="Confirm Password"
                 required
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
               />
               <button
                 type="button"
@@ -167,7 +167,7 @@ export default function TookDealSignup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-500 text-white py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+              className="w-full bg-[#00d4ad] text-white py-3 rounded-lg font-semibold hover:bg-[#418f80] transition-colors"
             >
               {loading ? "Signing up..." : "Sign Up"}
             </button>
@@ -180,7 +180,7 @@ export default function TookDealSignup() {
             Already have an account?{" "}
             <button
               onClick={handlesigin}
-              className="text-blue-600 hover:underline"
+              className="text-[#00d4ad] hover:underline"
             >
               Sign In
             </button>

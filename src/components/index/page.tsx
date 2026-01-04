@@ -130,12 +130,12 @@ export default function BusinessDirectory() {
         />
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="bg-white/90 backdrop-blur-sm rounded-full p-2">
-            <ExternalLink className="w-4 h-4 text-[#00d4ad]-600" />
+            <ExternalLink className="w-4 h-4 text-[#00d4ad]" />
           </div>
         </div>
       </div>
       <div className="p-4">
-        <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-[#00d4ad]-600 transition-colors duration-200 break-words">
+        <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-[#00d4ad]transition-colors duration-200 break-words">
           {business.name}
         </h3>
         <div className="flex items-center justify-between">
@@ -162,7 +162,7 @@ export default function BusinessDirectory() {
             {business.location?.split(",")[0]}
           </span>
         </div>
-        <div className="mt-2 text-xs text-[#00d4ad]-600 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="mt-2 text-xs text-[#00d4ad] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           View Details →
         </div>
       </div>
@@ -319,8 +319,8 @@ export default function BusinessDirectory() {
                 onClick={() => setSelectedCategory("all")}
                 className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 ${
                   selectedCategory === "all"
-                    ? "bg-[#00d4ad] text-[#00d4ad]-600"
-                    : "text-slate-600 hover:bg-[#00d4ad] hover:text-[#00d4ad]-600"
+                    ? "bg-[#00d4ad] text-[#ffffff]"
+                    : "text-slate-600 hover:bg-[#00d4ad] hover:text-[#ffffff]"
                 }`}
               >
                 <ShoppingCart className="w-6 h-6 mb-2" />
@@ -341,8 +341,8 @@ export default function BusinessDirectory() {
                     onClick={() => setSelectedCategory(category.key)}
                     className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 ${
                       selectedCategory === category.key
-                        ? "bg-[#00d4ad] text-[#00d4ad]-600"
-                        : "text-slate-600 hover:bg-[#00d4ad] hover:text-[#00d4ad]-600"
+                        ? "bg-[#00d4ad] text-[#ffffff]"
+                        : "text-slate-600 hover:bg-[#00d4ad] hover:text-[#ffffff]"
                     }`}
                   >
                     <IconComponent className="w-6 h-6 mb-2" />
@@ -364,7 +364,7 @@ export default function BusinessDirectory() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad]-500 text-slate-700 bg-white w-full sm:w-auto"
+            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] t-slate-700 bg-white w-full sm:w-auto"
           >
             <option value="all">All Categories</option>
             {availableCategories.map((cat) => {
@@ -397,7 +397,7 @@ export default function BusinessDirectory() {
           <div className="mb-12 ">
             <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6 break-words">
               Search Results for "
-              <span className="text-[#00d4ad]-600">{searchTerm}</span>"
+              <span className="text-[#00d4ad]-">{searchTerm}</span>"
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {filteredBusinesses.slice(0, 8).map((business) => (

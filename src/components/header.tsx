@@ -257,7 +257,7 @@ export default function Header() {
                 <div className="relative">
                   <button
                     onClick={toggleDropdown}
-                    className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-[#00d4ad] transition-colors duration-200"
                   >
                     <div className="flex items-center space-x-2">
                       <div className="h-8 w-8 bg-teal-600 rounded-full flex items-center justify-center overflow-hidden">
@@ -318,7 +318,7 @@ export default function Header() {
               ) : (
                 <button
                   onClick={handleLogin}
-                  className="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+                  className="bg-[#00d4ad] hover:bg-[#00b38a] text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
                 >
                   Login
                 </button>
