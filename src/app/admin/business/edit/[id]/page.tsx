@@ -8,7 +8,7 @@ import ImageUpload, { MultiImageUpload } from '@/components/ImageUpload';
 import { supabase } from '@/lib/supabaseClient';
 import AdminHeader from "@/components/admin-header";
 
-const categories = [
+const defaultCategories = [
   { value: 'restaurants', label: 'Restaurants' },
   { value: 'homeServices', label: 'Home Services' },
   { value: 'babyKids', label: 'Baby & Kids' },
@@ -20,6 +20,7 @@ const categories = [
   { value: 'bookstores', label: 'Bookstores' },
   { value: 'luxe', label: 'Luxe' },
   { value: 'beach', label: 'Beach' },
+  { value: 'other', label: 'Other (Specify)' },
 ];
 
 const priceRanges = [
@@ -50,10 +51,12 @@ export default function EditBusinessPage() {
   const [error, setError] = useState<string | null>(null);
   const [authChecking, setAuthChecking] = useState(true);
   const [adminUser, setAdminUser] = useState<any>(null);
+  const [categories, setCategories] = useState(defaultCategories);
 
   const [formData, setFormData] = useState({
     name: '',
     category: 'restaurants',
+    customCategory: '', // New field for custom category
     rating: 0,
     reviews: 0,
     location: '',
@@ -105,7 +108,37 @@ export default function EditBusinessPage() {
       setAuthChecking(false);
     };
 
+    const fetchCustomCategories = async () => {
+      // Fetch all unique custom categories from database
+      const { data, error } = await supabase
+        .from('businesses')
+        .select('category')
+        .not('category', 'is', null);
+      
+      if (data) {
+        // Get unique categories
+        const uniqueCategories = [...new Set(data.map(b => b.category))];
+        
+        // Filter out the default categories to get only custom ones
+        const defaultCategoryValues = defaultCategories.map(c => c.value);
+        const customCategories = uniqueCategories
+          .filter(cat => !defaultCategoryValues.includes(cat))
+          .map(cat => ({ value: cat, label: cat }));
+        
+        // Combine: default categories + custom categories + "Other" at the end
+        const otherOption = defaultCategories.find(c => c.value === 'other');
+        const defaultWithoutOther = defaultCategories.filter(c => c.value !== 'other');
+        
+        setCategories([
+          ...defaultWithoutOther,
+          ...customCategories,
+          otherOption!
+        ]);
+      }
+    };
+
     checkAdminAuth();
+    fetchCustomCategories();
   }, [router]);
 
   useEffect(() => {
@@ -126,9 +159,13 @@ export default function EditBusinessPage() {
       if (fetchError) throw fetchError;
 
       if (data) {
+        // Check if category is a custom one (not in default list)
+        const isCustomCategory = !defaultCategories.find(c => c.value === data.category);
+        
         setFormData({
           name: data.name || '',
-          category: data.category || 'restaurants',
+          category: isCustomCategory ? 'other' : (data.category || 'restaurants'),
+          customCategory: isCustomCategory ? data.category : '',
           rating: data.rating || 0,
           reviews: data.reviews || 0,
           location: data.location || '',
@@ -244,13 +281,23 @@ export default function EditBusinessPage() {
         throw new Error('Name and category are required');
       }
 
+      // Check if "Other" is selected but custom category is empty
+      if (formData.category === 'other' && !formData.customCategory.trim()) {
+        throw new Error('Please specify the category when selecting "Other"');
+      }
+
       const openHoursText = generateOpenHoursText();
+      
+      // Use custom category if "other" is selected, otherwise use selected category
+      const finalCategory = formData.category === 'other' 
+        ? formData.customCategory.trim() 
+        : formData.category;
 
       const { error: updateError } = await supabase
         .from('businesses')
         .update({
           name: formData.name,
-          category: formData.category,
+          category: finalCategory,
           rating: formData.rating,
           reviews: formData.reviews,
           location: formData.location,
@@ -272,6 +319,8 @@ export default function EditBusinessPage() {
 
       if (updateError) throw updateError;
 
+      // Show success alert and redirect
+      alert('✅ Business updated successfully!');
       router.push('/admin');
     } catch (err) {
       console.error('Error updating business:', err);
@@ -384,6 +433,28 @@ export default function EditBusinessPage() {
                 </select>
               </div>
             </div>
+
+            {/* Custom Category Input - Shows when "Other" is selected */}
+            {formData.category === 'other' && (
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Specify Category <span className="text-red-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  name="customCategory"
+                  value={formData.customCategory}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all"
+                  placeholder="e.g., Pet Stores, Fitness Centers, Law Firms, etc."
+                />
+                <p className="text-xs text-blue-700 mt-2 flex items-center gap-1">
+                  <Building2 className="w-3 h-3" />
+                  This will use a generic building icon on the frontend
+                </p>
+              </div>
+            )}
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

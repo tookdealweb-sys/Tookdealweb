@@ -40,8 +40,13 @@ interface Filters {
   openNow: string[];
 }
 
-// Available categories
-const categories = [
+interface Category {
+  value: string;
+  label: string;
+}
+
+// Default categories
+const defaultCategories: Category[] = [
   { value: 'restaurants', label: 'Restaurants' },
   { value: 'homeServices', label: 'Home Services' },
   { value: 'babyKids', label: 'Baby & Kids' },
@@ -69,32 +74,54 @@ function SearchPageContent() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [categories, setCategories] = useState<Category[]>(defaultCategories);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
   const [whatsappTracking, setWhatsappTracking] = useState<{ [key: string]: boolean }>({});
 
-  // Fetch businesses from Supabase
+  // Fetch businesses and categories from Supabase
   useEffect(() => {
-    fetchBusinesses();
+    fetchBusinessesAndCategories();
   }, []);
 
-  const fetchBusinesses = async () => {
+  const fetchBusinessesAndCategories = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      const { data, error: fetchError } = await supabase
+      // Fetch businesses
+      const { data: businessData, error: fetchError } = await supabase
         .from('businesses')
         .select('*')
         .order('rating', { ascending: false });
 
       if (fetchError) throw fetchError;
 
-      setBusinesses(data || []);
+      setBusinesses(businessData || []);
+
+      // Fetch unique categories from businesses
+      if (businessData && businessData.length > 0) {
+        const uniqueCategories = [...new Set(businessData.map(b => b.category).filter(Boolean))];
+        
+        // Separate default and custom categories
+        const defaultCategoryValues = defaultCategories.map(c => c.value);
+        const customCategories: Category[] = uniqueCategories
+          .filter(cat => !defaultCategoryValues.includes(cat))
+          .map(cat => ({ value: cat, label: cat }));
+        
+        // Combine: default categories + custom categories (sorted alphabetically)
+        const allCategories = [
+          ...defaultCategories,
+          ...customCategories.sort((a, b) => a.label.localeCompare(b.label))
+        ];
+        
+        setCategories(allCategories);
+      }
+      
       setLoading(false);
     } catch (err) {
-      console.error('Error fetching businesses:', err);
+      console.error('Error fetching data:', err);
       setError(err instanceof Error ? err.message : 'An error occurred');
       setLoading(false);
     }
@@ -236,8 +263,13 @@ function SearchPageContent() {
     setCurrentPage(1);
   };
 
-  const FilterSection = ({ title, children, defaultOpen = true }: any) => {
+  const FilterSection = ({ title, children, defaultOpen = true, showMoreLimit = 5 }: any) => {
     const [isOpen, setIsOpen] = useState(defaultOpen);
+    const [showAll, setShowAll] = useState(false);
+    
+    const childrenArray = Array.isArray(children) ? children : [children];
+    const shouldShowMore = childrenArray.length > showMoreLimit;
+    const displayedChildren = showAll ? childrenArray : childrenArray.slice(0, showMoreLimit);
     
     return (
       <div className="border-b border-gray-200 pb-4 mb-4">
@@ -250,7 +282,19 @@ function SearchPageContent() {
             ▼
           </span>
         </button>
-        {isOpen && <div className="space-y-2">{children}</div>}
+        {isOpen && (
+          <div className="space-y-2">
+            {displayedChildren}
+            {shouldShowMore && (
+              <button
+                onClick={() => setShowAll(!showAll)}
+                className="text-[#00d4ad] text-sm hover:underline font-medium mt-2"
+              >
+                {showAll ? '- Show Less' : `+ Show More (${childrenArray.length - showMoreLimit} more)`}
+              </button>
+            )}
+          </div>
+        )}
       </div>
     );
   };
@@ -283,7 +327,13 @@ function SearchPageContent() {
 
       <FilterSection title="Category">
         {categories.map(cat => (
-          <CheckboxFilter key={cat.value} filterType="category" value={cat.value} label={cat.label} checked={filters.category.includes(cat.value)} />
+          <CheckboxFilter 
+            key={cat.value} 
+            filterType="category" 
+            value={cat.value} 
+            label={cat.label} 
+            checked={filters.category.includes(cat.value)} 
+          />
         ))}
       </FilterSection>
 
@@ -336,7 +386,7 @@ function SearchPageContent() {
           <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
             <p className="text-red-800 font-semibold">Error loading businesses</p>
             <p className="text-red-600 mt-2">{error}</p>
-            <button onClick={fetchBusinesses} className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+            <button onClick={fetchBusinessesAndCategories} className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
               Try Again
             </button>
           </div>
@@ -470,7 +520,7 @@ function SearchPageContent() {
                           <div className="flex items-center gap-1">
                             <Clock size={14} className={business.isopen ? "text-[#00d4ad]" : "text-red-600"} />
                             <span className={business.isopen ? "text-[#00d4ad]" : "text-red-600"}>
-                              {business.isopen ? "Open" : "Closed"} - {business.isopen}
+                              {business.isopen ? "Open" : "Closed"}
                             </span>
                           </div>
                         )}
