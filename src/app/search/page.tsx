@@ -47,17 +47,22 @@ interface Category {
 
 // Default categories
 const defaultCategories: Category[] = [
-  { value: 'restaurants', label: 'Restaurants' },
-  { value: 'homeServices', label: 'Home Services' },
-  { value: 'babyKids', label: 'Baby & Kids' },
-  { value: 'techMobile', label: 'Tech & Mobile' },
-  { value: 'car', label: 'Auto Services' },
-  { value: 'hospitals', label: 'Hospitals' },
-  { value: 'beauty', label: 'Beauty & Wellness' },
-  { value: 'clinics', label: 'Clinics' },
-  { value: 'bookstores', label: 'Bookstores' },
-  { value: 'luxe', label: 'Luxe' },
-  { value: 'beach', label: 'Beach' },
+  { value: 'clothes', label: 'Clothes' },
+  { value: 'footwear', label: 'Footwear' },
+  { value: 'ladiesFancy', label: 'Ladies Fancy Items' },
+  { value: 'toysGifts', label: 'Toys & Gifts' },
+  { value: 'homeDecor', label: 'Home Decor' },
+  { value: 'carBikeAccessories', label: 'Car & Bike Accessories' },
+  { value: 'electricalElectronic', label: 'Electrical & Electronic Items' },
+  { value: 'gadgetsAccessories', label: 'Gadgets Accessories' },
+  { value: 'sportsGoods', label: 'Sports Goods' },
+  { value: 'fashion', label: 'Fashion' },
+  { value: 'kidsEssentials', label: "Kid's Essentials" },
+  { value: 'personalCare', label: 'Personal Care' },
+  { value: 'seasonalItems', label: 'Seasonal Items' },
+  { value: 'officeSupply', label: 'Office Supply' },
+  { value: 'travelAccessories', label: 'Travel Accessories' },
+  { value: 'tools', label: 'Tools' },
 ];
 
 function SearchPageContent() {

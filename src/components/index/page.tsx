@@ -8,20 +8,26 @@ import {
   ChevronRight,
   Star,
   MapPin,
-  Utensils,
-  Building2,
-  Smartphone,
-  ShoppingCart,
-  Sparkles,
-  Car,
-  Stethoscope,
-  BookOpen,
-  Gem,
-  Waves,
   ExternalLink,
-  Wrench,
   Loader2,
   LucideIcon,
+  Shirt,
+  Footprints,
+  Sparkles,
+  Gift,
+  Home,
+  Car,
+  Zap,
+  Smartphone,
+  Trophy,
+  Scissors,
+  Baby,
+  Heart,
+  Snowflake,
+  Briefcase,
+  Plane,
+  Wrench,
+  ShoppingCart,
 } from "lucide-react";
 import { useBusinessData } from "@/hooks/useBusinessData";
 import { Business } from "@/types/business";
@@ -33,17 +39,22 @@ interface Category {
 }
 
 const categories: Category[] = [
-  { key: "restaurants", label: "Restaurants", icon: Utensils },
-  { key: "homeServices", label: "Home Services", icon: Wrench },
-  { key: "babyKids", label: "Baby & Kids", icon: ShoppingCart },
-  { key: "techMobile", label: "Tech & Mobile", icon: Smartphone },
-  { key: "car", label: "Auto Services", icon: Car },
-  { key: "hospitals", label: "Hospitals", icon: Building2 },
-  { key: "beauty", label: "Beauty & Wellness", icon: Sparkles },
-  { key: "clinics", label: "Clinics", icon: Stethoscope },
-  { key: "bookstores", label: "Bookstores", icon: BookOpen },
-  { key: "luxe", label: "Luxe", icon: Gem },
-  { key: "beach", label: "Beach", icon: Waves },
+  { key: "clothes", label: "Clothes", icon: Shirt },
+  { key: "footwear", label: "Footwear", icon: Footprints },
+  { key: "ladiesFancy", label: "Ladies Fancy", icon: Sparkles },
+  { key: "toysGifts", label: "Toys & Gifts", icon: Gift },
+  { key: "homeDecor", label: "Home Decor", icon: Home },
+  { key: "carBikeAccessories", label: "Car & Bike", icon: Car },
+  { key: "electrical", label: "Electrical & Electronics", icon: Zap },
+  { key: "gadgetAccessories", label: "Gadget Accessories", icon: Smartphone },
+  { key: "sportsGoods", label: "Sports Goods", icon: Trophy },
+  { key: "fashion", label: "Fashion", icon: Scissors },
+  { key: "kidsEssentials", label: "Kids Essentials", icon: Baby },
+  { key: "personalCare", label: "Personal Care", icon: Heart },
+  { key: "seasonalItems", label: "Seasonal Items", icon: Snowflake },
+  { key: "officeSupply", label: "Office Supply", icon: Briefcase },
+  { key: "travelAccessories", label: "Travel Accessories", icon: Plane },
+  { key: "tools", label: "Tools", icon: Wrench },
 ];
 
 export default function BusinessDirectory() {
@@ -135,7 +146,7 @@ export default function BusinessDirectory() {
         </div>
       </div>
       <div className="p-4">
-        <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-[#00d4ad]transition-colors duration-200 break-words">
+        <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-[#00d4ad] transition-colors duration-200 break-words">
           {business.name}
         </h3>
         <div className="flex items-center justify-between">
@@ -199,7 +210,7 @@ export default function BusinessDirectory() {
     if (businesses.length === 0) return null;
 
     return (
-      <div className="mb-12 ">
+      <div className="mb-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl md:text-2xl font-bold text-slate-800">
             {title}
@@ -207,14 +218,14 @@ export default function BusinessDirectory() {
           <div className="flex gap-2">
             <button
               onClick={prevSlide}
-              className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-[#00d4ad]-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={businesses.length <= itemsPerPage}
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={nextSlide}
-              className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-[#00d4ad]-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={businesses.length <= itemsPerPage}
             >
               <ChevronRight className="w-5 h-5" />
@@ -242,7 +253,7 @@ export default function BusinessDirectory() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center overflow-x-hidden">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-[#00d4ad]-600 mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 animate-spin text-[#00d4ad] mx-auto mb-4" />
           <p className="text-slate-600 text-lg">Loading businesses...</p>
         </div>
       </div>
@@ -290,7 +301,7 @@ export default function BusinessDirectory() {
                   placeholder="Search for business..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2  text-slate-700 placeholder-slate-400"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 text-slate-700 placeholder-slate-400"
                 />
               </div>
               <button
@@ -319,8 +330,8 @@ export default function BusinessDirectory() {
                 onClick={() => setSelectedCategory("all")}
                 className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 ${
                   selectedCategory === "all"
-                    ? "bg-[#00d4ad] text-[#ffffff]"
-                    : "text-slate-600 hover:bg-[#00d4ad] hover:text-[#ffffff]"
+                    ? "bg-[#00d4ad] text-white"
+                    : "text-slate-600 hover:bg-[#00d4ad] hover:text-white"
                 }`}
               >
                 <ShoppingCart className="w-6 h-6 mb-2" />
@@ -341,8 +352,8 @@ export default function BusinessDirectory() {
                     onClick={() => setSelectedCategory(category.key)}
                     className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 ${
                       selectedCategory === category.key
-                        ? "bg-[#00d4ad] text-[#ffffff]"
-                        : "text-slate-600 hover:bg-[#00d4ad] hover:text-[#ffffff]"
+                        ? "bg-[#00d4ad] text-white"
+                        : "text-slate-600 hover:bg-[#00d4ad] hover:text-white"
                     }`}
                   >
                     <IconComponent className="w-6 h-6 mb-2" />
@@ -358,13 +369,13 @@ export default function BusinessDirectory() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8 ">
+      <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Filters */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-8">
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] t-slate-700 bg-white w-full sm:w-auto"
+            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] text-slate-700 bg-white w-full sm:w-auto"
           >
             <option value="all">All Categories</option>
             {availableCategories.map((cat) => {
@@ -394,10 +405,10 @@ export default function BusinessDirectory() {
 
         {/* Search Results */}
         {searchTerm && (
-          <div className="mb-12 ">
+          <div className="mb-12">
             <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6 break-words">
               Search Results for "
-              <span className="text-[#00d4ad]-">{searchTerm}</span>"
+              <span className="text-[#00d4ad]">{searchTerm}</span>"
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {filteredBusinesses.slice(0, 8).map((business) => (
@@ -417,69 +428,47 @@ export default function BusinessDirectory() {
           </div>
         )}
 
-        {/* Business Sections */}
+        {/* Business Sections - Dynamically show all categories with businesses */}
         {!searchTerm && selectedCategory === "all" && (
           <>
-            {businessesByCategory.restaurants && (
-              <SectionCarousel
-                title="Popular Restaurants"
-                businesses={businessesByCategory.restaurants}
-              />
-            )}
-
-            {businessesByCategory.homeServices && (
-              <SectionCarousel
-                title="Trusted Home Services"
-                businesses={businessesByCategory.homeServices}
-              />
-            )}
-
-            {businessesByCategory.babyKids && (
-              <SectionCarousel
-                title="Baby & Kids Essentials"
-                businesses={businessesByCategory.babyKids}
-              />
-            )}
-
-            {businessesByCategory.techMobile && (
-              <SectionCarousel
-                title="Top Tech & Mobile Stores"
-                businesses={businessesByCategory.techMobile}
-              />
-            )}
-
-            {businessesByCategory.car && (
-              <SectionCarousel
-                title="Auto Services"
-                businesses={businessesByCategory.car}
-              />
-            )}
+            {categories.map((category) => {
+              const businesses = businessesByCategory[category.key];
+              if (!businesses || businesses.length === 0) return null;
+              
+              return (
+                <SectionCarousel
+                  key={category.key}
+                  title={category.label}
+                  businesses={businesses}
+                />
+              );
+            })}
           </>
         )}
 
         {/* All Results when filtering */}
         {selectedCategory !== "all" && !searchTerm && (
-            <div className="mb-12">
-              <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">
-                Filtered Results
-              </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                {filteredBusinesses.map((business) => (
-                  <BusinessCard key={business.id} business={business} />
-                ))}
-              </div>
-              {filteredBusinesses.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-slate-500 text-lg">
-                    No businesses found matching your filters.
-                  </p>
-                  <p className="text-slate-400 text-sm mt-2">
-                    Try adjusting your search criteria.
-                  </p>
-                </div>
-              )}
+          <div className="mb-12">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">
+              Filtered Results
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+              {filteredBusinesses.map((business) => (
+                <BusinessCard key={business.id} business={business} />
+              ))}
             </div>
-          )}
+            {filteredBusinesses.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-slate-500 text-lg">
+                  No businesses found matching your filters.
+                </p>
+                <p className="text-slate-400 text-sm mt-2">
+                  Try adjusting your search criteria.
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );
