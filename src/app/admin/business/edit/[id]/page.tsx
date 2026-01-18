@@ -9,17 +9,22 @@ import { supabase } from '@/lib/supabaseClient';
 import AdminHeader from "@/components/admin-header";
 
 const defaultCategories = [
-  { value: 'restaurants', label: 'Restaurants' },
-  { value: 'homeServices', label: 'Home Services' },
-  { value: 'babyKids', label: 'Baby & Kids' },
-  { value: 'techMobile', label: 'Tech & Mobile' },
-  { value: 'car', label: 'Auto Services' },
-  { value: 'hospitals', label: 'Hospitals' },
-  { value: 'beauty', label: 'Beauty & Wellness' },
-  { value: 'clinics', label: 'Clinics' },
-  { value: 'bookstores', label: 'Bookstores' },
-  { value: 'luxe', label: 'Luxe' },
-  { value: 'beach', label: 'Beach' },
+  { value: 'clothes', label: 'Clothes' },
+  { value: 'footwear', label: 'Footwear' },
+  { value: 'ladiesFancy', label: 'Ladies Fancy Item' },
+  { value: 'toysGifts', label: 'Toys & Gifts' },
+  { value: 'homeDecor', label: 'Home Decor' },
+  { value: 'carBikeAccessories', label: 'Car & Bike Accessories' },
+  { value: 'electrical', label: 'Electrical & Electronic Items' },
+  { value: 'gadgetAccessories', label: 'Gadget Accessories' },
+  { value: 'sportsGoods', label: 'Sports Goods' },
+  { value: 'fashion', label: 'Fashion' },
+  { value: 'kidsEssentials', label: "Kids Essentials" },
+  { value: 'personalCare', label: 'Personal Care' },
+  { value: 'seasonalItems', label: 'Seasonal Items' },
+  { value: 'officeSupply', label: 'Office Supply' },
+  { value: 'travelAccessories', label: 'Travel Accessories' },
+  { value: 'tools', label: 'Tools' },
   { value: 'other', label: 'Other (Specify)' },
 ];
 
@@ -55,7 +60,7 @@ export default function EditBusinessPage() {
 
   const [formData, setFormData] = useState({
     name: '',
-    category: 'restaurants',
+    category: 'clothes',
     customCategory: '', // New field for custom category
     rating: 0,
     reviews: 0,
@@ -164,7 +169,7 @@ export default function EditBusinessPage() {
         
         setFormData({
           name: data.name || '',
-          category: isCustomCategory ? 'other' : (data.category || 'restaurants'),
+          category: isCustomCategory ? 'other' : (data.category || 'clothes'),
           customCategory: isCustomCategory ? data.category : '',
           rating: data.rating || 0,
           reviews: data.reviews || 0,
@@ -574,7 +579,7 @@ export default function EditBusinessPage() {
                       <button
                         type="button"
                         onClick={() => copyToAllDays(day)}
-                        className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                        className="text-xs px-3 py-1 bg-black hover:bg-gray-200 rounded-lg transition-colors"
                       >
                         Copy to all days
                       </button>

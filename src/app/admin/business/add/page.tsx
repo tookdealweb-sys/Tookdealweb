@@ -522,7 +522,7 @@ export default function AddBusinessPage() {
                       <button
                         type="button"
                         onClick={() => copyToAllDays(day)}
-                        className="text-xs px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                        className="text-xs px-3 py-1 bg-black hover:bg-gray-200 rounded-lg transition-colors"
                       >
                         Copy to all days
                       </button>

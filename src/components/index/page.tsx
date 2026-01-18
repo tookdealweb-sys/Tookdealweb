@@ -6,7 +6,6 @@ import {
   Search,
   ChevronLeft,
   ChevronRight,
-  Star,
   MapPin,
   ExternalLink,
   Loader2,
@@ -28,6 +27,7 @@ import {
   Plane,
   Wrench,
   ShoppingCart,
+  Package,
 } from "lucide-react";
 import { useBusinessData } from "@/hooks/useBusinessData";
 import { Business } from "@/types/business";
@@ -38,7 +38,7 @@ interface Category {
   icon: LucideIcon;
 }
 
-const categories: Category[] = [
+const categoryIcons: Category[] = [
   { key: "clothes", label: "Clothes", icon: Shirt },
   { key: "footwear", label: "Footwear", icon: Footprints },
   { key: "ladiesFancy", label: "Ladies Fancy", icon: Sparkles },
@@ -60,12 +60,18 @@ const categories: Category[] = [
 export default function BusinessDirectory() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [location, setLocation] = useState<string>("all");
 
   const router = useRouter();
 
   // Fetch data from Supabase
   const { businesses: businessData, loading, error } = useBusinessData();
+
+  // Get all unique categories from database
+  const databaseCategories = useMemo(() => {
+    if (!businessData) return [];
+    const uniqueCategories = [...new Set(businessData.map((b) => b.category))];
+    return uniqueCategories.filter(Boolean).sort();
+  }, [businessData]);
 
   // Filter and sort businesses
   const filteredBusinesses = useMemo(() => {
@@ -90,30 +96,28 @@ export default function BusinessDirectory() {
       );
     }
 
-    // Filter by location
-    if (location !== "all") {
-      filtered = filtered.filter((business) =>
-        business.location?.toLowerCase().includes(location.toLowerCase())
-      );
-    }
-
-    // Sort by rating
-    filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-
     return filtered;
-  }, [businessData, searchTerm, selectedCategory, location]);
+  }, [businessData, searchTerm, selectedCategory]);
 
-  // Group businesses by category for section carousels
+  // Group businesses by category
   const businessesByCategory = useMemo(() => {
     if (!businessData) return {};
 
     const grouped: Record<string, Business[]> = {};
+    
+    // Initialize static categories with empty arrays
+    categoryIcons.forEach((cat) => {
+      grouped[cat.key] = [];
+    });
+    
+    // Populate with actual businesses
     businessData.forEach((business) => {
       if (!grouped[business.category]) {
         grouped[business.category] = [];
       }
       grouped[business.category].push(business);
     });
+    
     return grouped;
   }, [businessData]);
 
@@ -149,30 +153,30 @@ export default function BusinessDirectory() {
         <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-[#00d4ad] transition-colors duration-200 break-words">
           {business.name}
         </h3>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm font-medium text-slate-700">
-              {business.rating}
+        {business.category && (
+          <div className="mb-2">
+            <span className="inline-block px-2 py-1 bg-[#00d4ad]/10 text-[#00d4ad] text-xs font-medium rounded">
+              {business.category}
             </span>
-            <span className="text-xs text-slate-500">({business.reviews})</span>
           </div>
-          {business.isopen !== undefined && (
-            <span
-              className={`text-xs font-medium ${
-                business.isopen ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {business.isopen ? "Open" : "Closed"}
-            </span>
-          )}
-        </div>
+        )}
         <div className="flex items-center gap-1 text-slate-600 mt-1">
           <MapPin className="w-3 h-3 text-slate-500 flex-shrink-0" />
           <span className="text-xs truncate">
             {business.location?.split(",")[0]}
           </span>
         </div>
+        {business.isopen !== undefined && (
+          <div className="mt-2">
+            <span
+              className={`text-xs font-medium ${
+                business.isopen ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {business.isopen ? "• Open" : "• Closed"}
+            </span>
+          </div>
+        )}
         <div className="mt-2 text-xs text-[#00d4ad] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           View Details →
         </div>
@@ -207,46 +211,55 @@ export default function BusinessDirectory() {
       setCurrentIndex((prev) => (prev > 0 ? prev - 1 : maxIndex));
     };
 
-    if (businesses.length === 0) return null;
-
     return (
       <div className="mb-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl md:text-2xl font-bold text-slate-800">
             {title}
+            <span className="ml-2 text-sm font-normal text-slate-500">
+              ({businesses.length})
+            </span>
           </h2>
-          <div className="flex gap-2">
-            <button
-              onClick={prevSlide}
-              className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={businesses.length <= itemsPerPage}
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              onClick={nextSlide}
-              className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={businesses.length <= itemsPerPage}
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
+          {businesses.length > 0 && (
+            <div className="flex gap-2">
+              <button
+                onClick={prevSlide}
+                className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={businesses.length <= itemsPerPage}
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={businesses.length <= itemsPerPage}
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+        </div>
+        {businesses.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            {visibleBusinesses.map((business) => (
+              <BusinessCard key={business.id} business={business} />
+            ))}
           </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-          {visibleBusinesses.map((business) => (
-            <BusinessCard key={business.id} business={business} />
-          ))}
-        </div>
+        ) : (
+          <div className="bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg p-8 text-center">
+            <p className="text-slate-500">No businesses in this category yet</p>
+            <p className="text-slate-400 text-sm mt-1">Check back soon!</p>
+          </div>
+        )}
       </div>
     );
   };
 
-  // Get unique categories that have businesses
-  const availableCategories = useMemo(() => {
-    if (!businessData) return [];
-    const cats = [...new Set(businessData.map((b) => b.category))];
-    return cats.filter((cat) => businessesByCategory[cat]?.length > 0);
-  }, [businessData, businessesByCategory]);
+  // Get icon for category or use default
+  const getCategoryIcon = (categoryKey: string): LucideIcon => {
+    const iconCat = categoryIcons.find(c => c.key === categoryKey);
+    return iconCat ? iconCat.icon : Package;
+  };
 
   // Loading state
   if (loading) {
@@ -283,17 +296,7 @@ export default function BusinessDirectory() {
         <div className="max-w-7xl mx-auto px-4 py-4">
           {/* Search Bar + Filters */}
           <div className="flex flex-col md:flex-row md:items-center md:gap-4 gap-3 mb-6">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (searchTerm.trim()) {
-                  router.push(
-                    `/search?query=${encodeURIComponent(searchTerm)}`
-                  );
-                }
-              }}
-              className="flex-1 flex gap-2 w-full"
-            >
+            <div className="flex-1 flex gap-2 w-full">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
                 <input
@@ -311,21 +314,12 @@ export default function BusinessDirectory() {
                 <Search className="w-5 h-5" />
                 <span className="hidden sm:inline">Search</span>
               </button>
-            </form>
+            </div>
           </div>
 
-          {/* Category Icons - Hidden on mobile, visible on md and up */}
-          <div className="hidden md:block overflow-x-auto overflow-y-hidden -mx-4 px-4">
-            <style jsx>{`
-              .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-              }
-              .scrollbar-hide {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-              }
-            `}</style>
-            <div className="flex items-center gap-2 pb-2 scrollbar-hide min-w-min">
+          {/* Category Icons - Static predefined categories */}
+          <div className="hidden md:block">
+            <div className="flex flex-wrap items-center gap-2 pb-2">
               <button
                 onClick={() => setSelectedCategory("all")}
                 className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 ${
@@ -340,26 +334,31 @@ export default function BusinessDirectory() {
                 </span>
               </button>
 
-              {categories.map((category) => {
+              {categoryIcons.map((category) => {
                 const IconComponent = category.icon;
-                const hasBusinesses =
-                  businessesByCategory[category.key]?.length > 0;
-                if (!hasBusinesses) return null;
+                const businessCount = businessesByCategory[category.key]?.length || 0;
 
                 return (
                   <button
                     key={category.key}
                     onClick={() => setSelectedCategory(category.key)}
-                    className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 ${
+                    className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 relative ${
                       selectedCategory === category.key
                         ? "bg-[#00d4ad] text-white"
-                        : "text-slate-600 hover:bg-[#00d4ad] hover:text-white"
+                        : businessCount > 0 
+                        ? "text-slate-600 hover:bg-[#00d4ad] hover:text-white"
+                        : "text-slate-400 hover:bg-slate-100"
                     }`}
                   >
                     <IconComponent className="w-6 h-6 mb-2" />
                     <span className="text-xs font-medium text-center whitespace-nowrap">
                       {category.label}
                     </span>
+                    {businessCount > 0 && (
+                      <span className="absolute top-1 right-1 bg-[#00d4ad] text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+                        {businessCount}
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -378,12 +377,11 @@ export default function BusinessDirectory() {
             className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] text-slate-700 bg-white w-full sm:w-auto"
           >
             <option value="all">All Categories</option>
-            {availableCategories.map((cat) => {
-              const categoryLabel =
-                categories.find((c) => c.key === cat)?.label || cat;
+            {databaseCategories.map((cat) => {
+              const businessCount = businessesByCategory[cat]?.length || 0;
               return (
                 <option key={cat} value={cat}>
-                  {categoryLabel}
+                  {cat} ({businessCount})
                 </option>
               );
             })}
@@ -428,17 +426,16 @@ export default function BusinessDirectory() {
           </div>
         )}
 
-        {/* Business Sections - Dynamically show all categories with businesses */}
+        {/* Business Sections - Show ALL categories */}
         {!searchTerm && selectedCategory === "all" && (
           <>
-            {categories.map((category) => {
-              const businesses = businessesByCategory[category.key];
-              if (!businesses || businesses.length === 0) return null;
+            {databaseCategories.map((category) => {
+              const businesses = businessesByCategory[category] || [];
               
               return (
                 <SectionCarousel
-                  key={category.key}
-                  title={category.label}
+                  key={category}
+                  title={category}
                   businesses={businesses}
                 />
               );
