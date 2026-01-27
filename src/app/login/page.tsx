@@ -205,10 +205,10 @@ export default function LoginPage() {
   // Show loading state during OAuth callback
   if (isOAuthCallback) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#00d4ad] mx-auto mb-4"></div>
-          <p className="text-gray-600">Completing sign-in...</p>
+          <p className="text-gray-600 dark:text-zinc-400">Completing sign-in...</p>
         </div>
       </div>
     );
@@ -217,16 +217,17 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Image */}
-      <div className="hidden lg:flex lg:w-1/2 relative">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-zinc-900">
         <img
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover opacity-90 dark:opacity-70"
           src="./images/Rectangle 2756.png"
           alt="Man using smartphone"
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#00d4ad]/20 to-transparent"></div>
       </div>
 
       {/* Right Side - Login Form */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-12 lg:px-16 xl:px-20 bg-white">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-12 lg:px-16 xl:px-20">
         <div className="max-w-md w-full mx-auto">
           {/* Logo */}
           <div className="flex items-center justify-center mb-12">
@@ -239,15 +240,15 @@ export default function LoginPage() {
 
           {/* Heading */}
           <div className="mb-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
               Get Your Shop Online in Minutes
             </h1>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm text-center">{error}</p>
+            <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-red-600 dark:text-red-400 text-sm text-center">{error}</p>
             </div>
           )}
 
@@ -255,7 +256,7 @@ export default function LoginPage() {
           <form onSubmit={handleLogin} className="space-y-6">
             {/* Email Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                 Email
               </label>
               <input
@@ -264,13 +265,13 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 required
-                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder-gray-500"
+                className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#00d4ad] focus:border-transparent bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-zinc-500"
               />
             </div>
 
             {/* Password Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
                 Password
               </label>
               <div className="relative">
@@ -280,12 +281,12 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter password"
                   required
-                  className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent bg-gray-50 text-gray-900 placeholder-gray-500 pr-12"
+                  className="w-full px-4 py-3 border border-gray-200 dark:border-zinc-700 rounded-lg focus:ring-2 focus:ring-[#00d4ad] focus:border-transparent bg-gray-50 dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-zinc-500 pr-12"
                 />
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-418f80-600"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-zinc-500 hover:text-[#00d4ad]"
                 >
                   {showPassword ? (
                     <EyeOff className="h-5 w-5" />
@@ -301,7 +302,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => (window.location.href = "/forgotpassword")}
-                className="text-sm text-[#00d4ad] hover:text-[#418f80]"
+                className="text-sm text-[#00d4ad] hover:text-[#00b89a]"
               >
                 Forgot password?
               </button>
@@ -311,7 +312,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#00d4ad] hover:bg-[#418f80] text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#00d4ad] hover:bg-[#00b89a] text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#00d4ad]/20"
             >
               {loading ? "Logging in..." : "Log In"}
             </button>
@@ -320,10 +321,10 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-200"></div>
+              <div className="w-full border-t border-gray-200 dark:border-zinc-700"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
+              <span className="px-2 bg-white dark:bg-black text-gray-500 dark:text-zinc-400">Or continue with</span>
             </div>
           </div>
 
@@ -331,7 +332,7 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             type="button"
-            className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-white hover:bg-gray-418f80 border border-gray-300 rounded-lg text-gray-700 font-medium text-sm transition-colors duration-200 shadow-sm"
+            className="flex items-center justify-center gap-3 w-full px-4 py-3 bg-white dark:bg-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-700 border border-gray-300 dark:border-zinc-600 rounded-lg text-gray-700 dark:text-zinc-200 font-medium text-sm transition-colors duration-200 shadow-sm"
           >
             <svg
               width="18"
@@ -363,11 +364,11 @@ export default function LoginPage() {
 
           {/* Sign Up Link */}
           <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-zinc-400">
               No account?{" "}
               <button
                 onClick={handlesignup}
-                className="text-[#00d4ad] hover:text-[#418f80] font-medium cursor-pointer"
+                className="text-[#00d4ad] hover:text-[#00b89a] font-medium cursor-pointer"
               >
                 Create an account
               </button>
@@ -376,13 +377,13 @@ export default function LoginPage() {
 
           {/* Terms and Privacy */}
           <div className="mt-8 text-center">
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-gray-500 dark:text-zinc-500">
               By signing up, you agree to our{" "}
-              <button className="text-[#00d4ad] hover:text-[#418f80]">
+              <button className="text-[#00d4ad] hover:text-[#00b89a]">
                 Terms
               </button>{" "}
               and{" "}
-              <button className="text-[#00d4ad] hover:text-[#418f80]">
+              <button className="text-[#00d4ad] hover:text-[#00b89a]">
                 Privacy
               </button>
               .

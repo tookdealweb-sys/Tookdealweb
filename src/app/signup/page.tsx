@@ -66,14 +66,15 @@ export default function TookDealSignup() {
   
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen flex">
       {/* Left side - Image */}
-      <div className="hidden lg:flex lg:w-1/2 relative">
+      <div className="hidden lg:flex lg:w-1/2 relative bg-zinc-900">
         <img
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover opacity-90 dark:opacity-70"
           src="./images/Rectangle 2756.png"
           alt="Man using smartphone"
         />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#00d4ad]/20 to-transparent"></div>
       </div>
 
       {/* Right side - Form */}
@@ -85,7 +86,7 @@ export default function TookDealSignup() {
               src="./images/Frame 1.png"
               alt="TookDeal Logo"
             />
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
               Get Your Shop Online in Minutes
             </h1>
           </div>
@@ -99,7 +100,7 @@ export default function TookDealSignup() {
               onChange={handleInputChange}
               placeholder="Full name"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-zinc-500 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
             />
 
             {/* Email */}
@@ -110,7 +111,7 @@ export default function TookDealSignup() {
               onChange={handleInputChange}
               placeholder="Email"
               required
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-zinc-500 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
             />
 
             {/* Phone */}
@@ -120,7 +121,7 @@ export default function TookDealSignup() {
               value={formData.phone}
               onChange={handleInputChange}
               placeholder="Phone number"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
+              className="w-full px-4 py-3 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-zinc-500 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
             />
 
             {/* Password */}
@@ -132,12 +133,12 @@ export default function TookDealSignup() {
                 onChange={handleInputChange}
                 placeholder="Password"
                 required
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-zinc-500 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-zinc-400 hover:text-[#00d4ad]"
               >
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -152,12 +153,12 @@ export default function TookDealSignup() {
                 onChange={handleInputChange}
                 placeholder="Confirm Password"
                 required
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-zinc-500 rounded-lg focus:ring-2 focus:ring-[#00d4ad] outline-none"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-zinc-400 hover:text-[#00d4ad]"
               >
                 {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </button>
@@ -167,7 +168,7 @@ export default function TookDealSignup() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#00d4ad] text-white py-3 rounded-lg font-semibold hover:bg-[#418f80] transition-colors"
+              className="w-full bg-[#00d4ad] text-white py-3 rounded-lg font-semibold hover:bg-[#00b89a] transition-colors shadow-lg shadow-[#00d4ad]/20 disabled:opacity-50"
             >
               {loading ? "Signing up..." : "Sign Up"}
             </button>
@@ -176,17 +177,21 @@ export default function TookDealSignup() {
           {/* Google Login */}
           
           {/* Already have account */}
-          <p className="text-center mt-6 text-gray-600 text-sm">
+          <p className="text-center mt-6 text-gray-600 dark:text-zinc-400 text-sm">
             Already have an account?{" "}
             <button
               onClick={handlesigin}
-              className="text-[#00d4ad] hover:underline"
+              className="text-[#00d4ad] hover:text-[#00b89a] font-medium"
             >
               Sign In
             </button>
           </p>
 
-          {error && <p className="text-red-500 text-center mt-4">{error}</p>}
+          {error && (
+            <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg">
+              <p className="text-red-500 dark:text-red-400 text-center text-sm">{error}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
