@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className="flex">
         <GoogleOAuthProvider clientId="1095070458596-asas5uaojdujd3712lcqq8ngjcv328ri.apps.googleusercontent.com">
           <div className="flex-1 flex flex-col">
-            <main className="bg-white md:p-6">{children}</main>
+            <main className="bg-black md:p-6">{children}</main>
           </div>
         </GoogleOAuthProvider>
         <script

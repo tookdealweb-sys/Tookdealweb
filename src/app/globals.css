@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #000000;
+  --foreground: #ffffff;
 }
 
 @theme inline {
@@ -14,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #000000;
+    --foreground: #ffffff;
   }
 }
 
@@ -25,34 +25,54 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-button ,a {
+button, a {
   cursor: pointer;
 }
-::placeholder{
-  color: #0a0a0a;
+
+::placeholder {
+  color: #71717a;
 }
 
-/* Fix for all form inputs to have dark text */
+/* Fix for all form inputs to have light text on dark backgrounds */
 input[type="text"],
 input[type="email"],
 input[type="tel"],
 input[type="url"],
 input[type="number"],
+input[type="password"],
 textarea,
 select {
-  color: #1f2937 !important; /* Dark gray text */
-  background-color: white !important;
+  color: #ffffff !important; /* White text */
+  background-color: #18181b !important; /* Dark zinc background */
+  border-color: #3f3f46 !important; /* Zinc border */
 }
 
 input[type="text"]::placeholder,
 input[type="email"]::placeholder,
 input[type="tel"]::placeholder,
 input[type="url"]::placeholder,
+input[type="password"]::placeholder,
 textarea::placeholder {
-  color: #9ca3af !important; /* Light gray placeholder */
+  color: #71717a !important; /* Gray placeholder */
 }
 
-/* Ensure select dropdowns show dark text */
+/* Ensure select dropdowns show light text */
 select option {
-  color: #1f2937;
+  color: #ffffff;
+  background-color: #18181b;
+}
+
+/* Focus states for inputs */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: #00d4ad !important;
+  ring: 2px;
+  ring-color: #00d4ad;
 }

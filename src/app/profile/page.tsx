@@ -224,10 +224,10 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-          <p className="text-gray-600">Loading profile...</p>
+          <Loader2 className="w-12 h-12 animate-spin text-[#00d4ad] mx-auto mb-4" />
+          <p className="text-gray-600 dark:text-zinc-400">Loading profile...</p>
         </div>
       </div>
     );
@@ -235,12 +235,12 @@ export default function ProfilePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <div className="text-center bg-white p-8 rounded-2xl shadow-lg">
-          <p className="text-red-600 text-lg mb-4">{error}</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 p-8 rounded-2xl shadow-lg">
+          <p className="text-red-600 dark:text-red-400 text-lg mb-4">{error}</p>
           <button
             onClick={() => router.push('/login')}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="bg-[#00d4ad] text-white px-6 py-2 rounded-lg hover:bg-[#00b89a] transition"
           >
             Go to Login
           </button>
@@ -251,12 +251,12 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
-        <div className="text-center bg-white p-8 rounded-2xl shadow-lg">
-          <p className="text-gray-800 text-lg mb-4">Please log in to view your profile</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 p-8 rounded-2xl shadow-lg">
+          <p className="text-gray-800 dark:text-white text-lg mb-4">Please log in to view your profile</p>
           <button
             onClick={() => router.push('/login')}
-            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+            className="bg-[#00d4ad] text-white px-6 py-2 rounded-lg hover:bg-[#00b89a] transition"
           >
             Go to Login
           </button>
@@ -266,12 +266,12 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         {/* Back Button */}
         <button
           onClick={() => router.push('/')}
-          className="mb-6 text-gray-600 hover:text-gray-900 flex items-center gap-2 transition"
+          className="mb-6 text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white flex items-center gap-2 transition"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -279,13 +279,13 @@ export default function ProfilePage() {
           Back to Home
         </button>
 
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-teal-600 to-teal-700 px-8 py-12 relative">
+          <div className="bg-gradient-to-r from-[#00d4ad] to-[#00b89a] px-8 py-12 relative">
             <div className="absolute top-6 right-6 flex gap-2 flex-wrap">
               <button
                 onClick={handleSignOut}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 transition flex items-center gap-2"
+                className="bg-red-500 dark:bg-red-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-red-600 dark:hover:bg-red-700 transition flex items-center gap-2 shadow-lg"
               >
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:inline">Sign Out</span>
@@ -293,7 +293,7 @@ export default function ProfilePage() {
               {!isEditing ? (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="bg-white text-teal-600 px-4 py-2 rounded-lg font-medium hover:bg-teal-50 transition flex items-center gap-2"
+                  className="bg-white dark:bg-zinc-800 text-[#00d4ad] dark:text-white px-4 py-2 rounded-lg font-medium hover:bg-gray-50 dark:hover:bg-zinc-700 transition flex items-center gap-2 shadow-lg border border-transparent dark:border-zinc-700"
                 >
                   <Edit2 className="w-4 h-4" />
                   <span className="hidden sm:inline">Edit Profile</span>
@@ -303,7 +303,7 @@ export default function ProfilePage() {
                   <button
                     onClick={handleCancel}
                     disabled={saving}
-                    className="bg-white text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition flex items-center gap-2 disabled:opacity-50"
+                    className="bg-white dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-zinc-700 transition flex items-center gap-2 disabled:opacity-50 shadow-lg border border-transparent dark:border-zinc-700"
                   >
                     <X className="w-4 h-4" />
                     <span className="hidden sm:inline">Cancel</span>
@@ -311,7 +311,7 @@ export default function ProfilePage() {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="bg-green-500 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 transition flex items-center gap-2 disabled:opacity-50"
+                    className="bg-green-500 dark:bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-600 dark:hover:bg-green-700 transition flex items-center gap-2 disabled:opacity-50 shadow-lg"
                   >
                     {saving ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -327,7 +327,7 @@ export default function ProfilePage() {
             {/* Avatar */}
             <div className="flex justify-center">
               <div className="relative">
-                <div className="w-32 h-32 rounded-full bg-white p-1 shadow-lg">
+                <div className="w-32 h-32 rounded-full bg-white dark:bg-zinc-800 p-1 shadow-lg border-4 border-white/20">
                   {formData.avatarUrl ? (
                     <img
                       src={formData.avatarUrl}
@@ -335,13 +335,13 @@ export default function ProfilePage() {
                       className="w-full h-full rounded-full object-cover"
                     />
                   ) : (
-                    <div className="w-full h-full rounded-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
+                    <div className="w-full h-full rounded-full bg-gradient-to-br from-[#00d4ad] to-[#00b89a] flex items-center justify-center">
                       <User className="w-16 h-16 text-white" />
                     </div>
                   )}
                 </div>
                 {isEditing && (
-                  <label className="absolute bottom-0 right-0 bg-teal-600 text-white p-3 rounded-full cursor-pointer hover:bg-teal-700 transition shadow-lg">
+                  <label className="absolute bottom-0 right-0 bg-[#00d4ad] text-white p-3 rounded-full cursor-pointer hover:bg-[#00b89a] transition shadow-lg">
                     {uploading ? (
                       <Loader2 className="w-5 h-5 animate-spin" />
                     ) : (
@@ -365,8 +365,8 @@ export default function ProfilePage() {
             <div className="space-y-6">
               {/* Display Name */}
               <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <User className="w-4 h-4 mr-2 text-gray-500" />
+                <label className="flex items-center text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
+                  <User className="w-4 h-4 mr-2 text-gray-500 dark:text-zinc-400" />
                   Display Name
                 </label>
                 {isEditing ? (
@@ -375,11 +375,11 @@ export default function ProfilePage() {
                     name="displayName"
                     value={formData.displayName}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-[#00d4ad] focus:border-transparent transition"
                     placeholder="Enter your name"
                   />
                 ) : (
-                  <p className="text-lg text-gray-900 px-4 py-3 bg-gray-50 rounded-lg">
+                  <p className="text-lg text-gray-900 dark:text-white px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-transparent dark:border-zinc-700 rounded-lg">
                     {formData.displayName || 'Not set'}
                   </p>
                 )}
@@ -387,13 +387,13 @@ export default function ProfilePage() {
 
               {/* Email */}
               <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <Mail className="w-4 h-4 mr-2 text-gray-500" />
+                <label className="flex items-center text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
+                  <Mail className="w-4 h-4 mr-2 text-gray-500 dark:text-zinc-400" />
                   Email Address
                 </label>
-                <p className="text-lg text-gray-900 px-4 py-3 bg-gray-50 rounded-lg flex items-center justify-between flex-wrap gap-2">
+                <p className="text-lg text-gray-900 dark:text-white px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-transparent dark:border-zinc-700 rounded-lg flex items-center justify-between flex-wrap gap-2">
                   <span className="break-all">{user.email}</span>
-                  <span className="text-xs text-gray-500 bg-gray-200 px-2 py-1 rounded whitespace-nowrap">
+                  <span className="text-xs text-gray-500 dark:text-zinc-400 bg-gray-200 dark:bg-zinc-700 px-2 py-1 rounded whitespace-nowrap">
                     Read only
                   </span>
                 </p>
@@ -401,8 +401,8 @@ export default function ProfilePage() {
 
               {/* Phone */}
               <div>
-                <label className="flex items-center text-sm font-medium text-gray-700 mb-2">
-                  <Phone className="w-4 h-4 mr-2 text-gray-500" />
+                <label className="flex items-center text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2">
+                  <Phone className="w-4 h-4 mr-2 text-gray-500 dark:text-zinc-400" />
                   Phone Number
                 </label>
                 {isEditing ? (
@@ -411,11 +411,11 @@ export default function ProfilePage() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent transition"
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-[#00d4ad] focus:border-transparent transition"
                     placeholder="Enter your phone number"
                   />
                 ) : (
-                  <p className="text-lg text-gray-900 px-4 py-3 bg-gray-50 rounded-lg">
+                  <p className="text-lg text-gray-900 dark:text-white px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-transparent dark:border-zinc-700 rounded-lg">
                     {formData.phone || 'Not set'}
                   </p>
                 )}
@@ -423,31 +423,31 @@ export default function ProfilePage() {
 
               {/* Provider */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                <label className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2 block">
                   Login Provider
                 </label>
-                <p className="text-sm text-gray-600 px-4 py-3 bg-gray-50 rounded-lg flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${getProviderName() === 'Google' ? 'bg-red-500' : 'bg-teal-500'}`}></span>
+                <p className="text-sm text-gray-600 dark:text-zinc-400 px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-transparent dark:border-zinc-700 rounded-lg flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${getProviderName() === 'Google' ? 'bg-red-500' : 'bg-[#00d4ad]'}`}></span>
                   {getProviderName()}
                 </p>
               </div>
 
               {/* User ID */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                <label className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2 block">
                   User ID
                 </label>
-                <p className="text-sm text-gray-600 px-4 py-3 bg-gray-50 rounded-lg font-mono break-all">
+                <p className="text-sm text-gray-600 dark:text-zinc-400 px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-transparent dark:border-zinc-700 rounded-lg font-mono break-all">
                   {user.id}
                 </p>
               </div>
 
               {/* Account Created */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">
+                <label className="text-sm font-medium text-gray-700 dark:text-zinc-300 mb-2 block">
                   Account Created
                 </label>
-                <p className="text-sm text-gray-600 px-4 py-3 bg-gray-50 rounded-lg">
+                <p className="text-sm text-gray-600 dark:text-zinc-400 px-4 py-3 bg-gray-50 dark:bg-zinc-800 border border-transparent dark:border-zinc-700 rounded-lg">
                   {new Date(user.created_at).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',

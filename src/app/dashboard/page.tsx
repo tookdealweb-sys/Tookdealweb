@@ -13,12 +13,12 @@ function LoginPopup() {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+    <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-lg shadow-2xl shadow-[#00d4ad]/10 max-w-md w-full p-6">
         <div className="text-center">
           <div className="mb-4">
             <svg
-              className="mx-auto h-12 w-12 text-blue-600"
+              className="mx-auto h-12 w-12 text-[#00d4ad]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -32,17 +32,17 @@ function LoginPopup() {
             </svg>
           </div>
           
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-white mb-2">
             Login Required
           </h2>
           
-          <p className="text-gray-600 mb-6">
+          <p className="text-zinc-400 mb-6">
             Please log in to continue accessing the dashboard content.
           </p>
           
           <button
             onClick={handleLogin}
-            className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            className="w-full bg-[#00d4ad] text-white py-3 px-4 rounded-lg font-semibold hover:bg-[#00b89a] transition-colors shadow-lg shadow-[#00d4ad]/20"
           >
             Go to Login
           </button>
@@ -108,7 +108,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-black">
       <section>
         <Header />
       </section>

@@ -184,11 +184,11 @@ export default function Header() {
 
   if (loading) {
     return (
-      <header className="fixed top-0 left-0 right-0 w-full bg-white shadow-sm border-b border-gray-100 z-50">
+      <header className=" fixed top-0 left-0 right-0 w-full bg-white dark:bg-zinc-950 shadow-sm border-b border-gray-100 dark:border-zinc-800 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="h-10 w-32 bg-gray-200 animate-pulse rounded"></div>
-            <div className="h-8 w-24 bg-gray-200 animate-pulse rounded"></div>
+            <div className="h-10 w-32 bg-gray-200 dark:bg-zinc-800 animate-pulse rounded"></div>
+            <div className="h-8 w-24 bg-gray-200 dark:bg-zinc-800 animate-pulse rounded"></div>
           </div>
         </div>
       </header>
@@ -196,7 +196,7 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 w-full bg-white shadow-sm border-b border-gray-100 z-50">
+    <header className="fixed top-0 left-0 right-0 w-full bg-white dark:bg-zinc-950 shadow-sm border-b border-gray-100 dark:border-zinc-800 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -212,26 +212,26 @@ export default function Header() {
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+              className="text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
             >
               Home
             </Link>
            
             <Link
               href="/services"
-              className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+              className="text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
             >
               Services
             </Link>
             <Link
               href="/help"
-              className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+              className="text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
             >
               Help Center
             </Link>
             <Link
               href="/about"
-              className="text-gray-700 hover:text-gray-900 font-medium transition-colors"
+              className="text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white font-medium transition-colors"
             >
               About
             </Link>
@@ -245,10 +245,10 @@ export default function Header() {
             {/* Heart Icon */}
             <Link
               href="/favorites"
-              className="w-9 h-9 flex items-center justify-center bg-gray-100 rounded-full cursor-pointer hover:bg-gray-200 transition-colors"
+              className="w-9 h-9 flex items-center justify-center bg-gray-100 dark:bg-zinc-800 rounded-full cursor-pointer hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors"
               aria-label="Favorites"
             >
-              <Heart className="h-5 w-5 text-gray-700" />
+              <Heart className="h-5 w-5 text-gray-700 dark:text-zinc-300" />
             </Link>
 
             {/* Profile Avatar or Login Button */}
@@ -257,10 +257,10 @@ export default function Header() {
                 <div className="relative">
                   <button
                     onClick={toggleDropdown}
-                    className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-[#00d4ad] transition-colors duration-200"
+                    className="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors duration-200"
                   >
                     <div className="flex items-center space-x-2">
-                      <div className="h-8 w-8 bg-teal-600 rounded-full flex items-center justify-center overflow-hidden">
+                      <div className="h-8 w-8 bg-[#00d4ad] rounded-full flex items-center justify-center overflow-hidden">
                         {user.avatar_url ? (
                           <img
                             src={user.avatar_url}
@@ -271,11 +271,11 @@ export default function Header() {
                           <User className="h-4 w-4 text-white" />
                         )}
                       </div>
-                      <span className="text-gray-700 font-medium">
+                      <span className="text-gray-700 dark:text-zinc-300 font-medium">
                         Hey, {user.username}
                       </span>
                       <ChevronDown
-                        className={`h-4 w-4 text-gray-500 transform transition-transform duration-200 ${
+                        className={`h-4 w-4 text-gray-500 dark:text-zinc-400 transform transition-transform duration-200 ${
                           isDropdownOpen ? "rotate-180" : ""
                         }`}
                       />
@@ -284,18 +284,18 @@ export default function Header() {
 
                   {/* Dropdown Menu */}
                   {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-zinc-900 rounded-lg shadow-lg border border-gray-200 dark:border-zinc-700 py-1 z-50">
                       <button
                         onClick={handleViewProfile}
-                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center space-x-2 transition-colors"
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800 flex items-center space-x-2 transition-colors"
                       >
                         <User className="h-4 w-4" />
                         <span>View Profile</span>
                       </button>
-                      <hr className="border-gray-100 my-1" />
+                      <hr className="border-gray-100 dark:border-zinc-800 my-1" />
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center space-x-2 transition-colors"
+                        className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 flex items-center space-x-2 transition-colors"
                       >
                         <svg
                           className="h-4 w-4"
@@ -318,7 +318,7 @@ export default function Header() {
               ) : (
                 <button
                   onClick={handleLogin}
-                  className="bg-[#00d4ad] hover:bg-[#00b38a] text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
+                  className="bg-[#00d4ad] hover:bg-[#00b89a] text-white px-6 py-2 rounded-lg font-medium transition-colors duration-200"
                 >
                   Login
                 </button>
@@ -330,7 +330,7 @@ export default function Header() {
           <div className="md:hidden">
             <button
               onClick={toggleMobileMenu}
-              className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="p-2 text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white transition-colors"
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? (
@@ -346,11 +346,11 @@ export default function Header() {
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden max-h-[calc(100vh-4rem)] overflow-y-auto">
-          <div className="px-4 pt-4 pb-4 space-y-1 bg-white border-t border-gray-200 shadow-lg">
+          <div className="px-4 pt-4 pb-4 space-y-1 bg-white dark:bg-zinc-950 border-t border-gray-200 dark:border-zinc-800 shadow-lg">
             <Link
               href="/"
               onClick={closeMobileMenu}
-              className="block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium rounded-lg transition-colors"
+              className="block px-4 py-3 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 font-medium rounded-lg transition-colors"
             >
               Home
             </Link>
@@ -358,21 +358,21 @@ export default function Header() {
             <Link
               href="/services"
               onClick={closeMobileMenu}
-              className="block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium rounded-lg transition-colors"
+              className="block px-4 py-3 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 font-medium rounded-lg transition-colors"
             >
               Services
             </Link>
             <Link
               href="/help"
               onClick={closeMobileMenu}
-              className="block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium rounded-lg transition-colors"
+              className="block px-4 py-3 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 font-medium rounded-lg transition-colors"
             >
               Help Center
             </Link>
             <Link
               href="/about"
               onClick={closeMobileMenu}
-              className="block px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium rounded-lg transition-colors"
+              className="block px-4 py-3 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 font-medium rounded-lg transition-colors"
             >
               About
             </Link>
@@ -385,7 +385,7 @@ export default function Header() {
               {/* Heart Icon */}
               <Link
                 href="/favorites"
-                className="p-2 text-gray-600 hover:text-gray-900 flex  transition-colors rounded-lg hover:bg-gray-100"
+                className="p-2 text-gray-600 dark:text-zinc-400 hover:text-gray-900 dark:hover:text-white flex transition-colors rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-900"
                 aria-label="Favorites"
               >Favorites
                 <Heart className="h-6 w-6 p-1" />
@@ -393,11 +393,11 @@ export default function Header() {
             </div>
 
             {/* Mobile User Section */}
-            <div className="border-t border-gray-200 pt-4 mt-2">
+            <div className="border-t border-gray-200 dark:border-zinc-800 pt-4 mt-2">
               {isLoggedIn && user ? (
                 <div className="space-y-2">
-                  <div className="px-4 py-3 flex items-center space-x-3 bg-gray-50 rounded-lg">
-                    <div className="h-10 w-10 bg-teal-600 rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
+                  <div className="px-4 py-3 flex items-center space-x-3 bg-gray-50 dark:bg-zinc-900 rounded-lg">
+                    <div className="h-10 w-10 bg-[#00d4ad] rounded-full flex items-center justify-center overflow-hidden flex-shrink-0">
                       {user.avatar_url ? (
                         <img
                           src={user.avatar_url}
@@ -408,20 +408,20 @@ export default function Header() {
                         <User className="h-5 w-5 text-white" />
                       )}
                     </div>
-                    <span className="text-gray-700 font-medium text-base">
+                    <span className="text-gray-700 dark:text-zinc-300 font-medium text-base">
                       Hey, {user.username}
                     </span>
                   </div>
                   <button
                     onClick={handleViewProfile}
-                    className="w-full text-left px-4 py-3 text-gray-700 hover:text-gray-900 hover:bg-gray-50 font-medium rounded-lg transition-colors flex items-center space-x-3"
+                    className="w-full text-left px-4 py-3 text-gray-700 dark:text-zinc-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-zinc-900 font-medium rounded-lg transition-colors flex items-center space-x-3"
                   >
                     <User className="h-5 w-5" />
                     <span>View Profile</span>
                   </button>
                   <button
                     onClick={handleLogout}
-                    className="w-full text-left px-4 py-3 text-red-600 hover:text-red-700 hover:bg-red-50 font-medium rounded-lg transition-colors flex items-center space-x-3"
+                    className="w-full text-left px-4 py-3 text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950/50 font-medium rounded-lg transition-colors flex items-center space-x-3"
                   >
                     <svg
                       className="h-5 w-5"
@@ -443,7 +443,7 @@ export default function Header() {
                 <div className="px-4">
                   <button
                     onClick={handleLogin}
-                    className="w-full bg-teal-600 hover:bg-teal-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
+                    className="w-full bg-[#00d4ad] hover:bg-[#00b89a] text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200"
                   >
                     Login
                   </button>

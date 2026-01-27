@@ -39,7 +39,7 @@ export default function ImageGallery({ images }: Props) {
         <img src={gallery[2]} alt="thumb3" className="h-32 w-full object-cover" />
         <button
           onClick={() => setOpen(true)}
-          className="relative z-[99] h-32 w-full bg-black text-white flex items-center justify-center"
+          className="relative z-[99] h-32 w-full bg-zinc-900 dark:bg-zinc-800 text-white flex items-center justify-center hover:bg-zinc-800 dark:hover:bg-zinc-700 transition-colors font-medium"
         >
           Show all Images
         </button>
@@ -50,7 +50,7 @@ export default function ImageGallery({ images }: Props) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="fixed inset-0 bg-black/90 z-[9999] flex flex-col"
+          className="fixed inset-0 bg-black/95 z-[9999] flex flex-col"
         >
           {/* Close Button */}
 
@@ -58,7 +58,7 @@ export default function ImageGallery({ images }: Props) {
             type="button"
             onClick={() => setOpen(false)}
             className="fixed top-4 right-4 z-[10000] inline-flex h-10 w-10 items-center justify-center
-                    rounded-full bg-white/10 hover:bg-white/20 focus:outline-none"
+                    rounded-full bg-white/10 hover:bg-white/20 focus:outline-none transition-colors"
             aria-label="Close gallery"
           >
             <X className="h-6 w-6 text-white" />

@@ -128,10 +128,10 @@ export default function FavoritesPage() {
 
   const BusinessCard = ({ business }: { business: Business }) => (
     <div 
-      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 group"
+      className="bg-white dark:bg-zinc-900 border border-transparent dark:border-zinc-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:shadow-[#00d4ad]/10 transition-all duration-300 group"
     >
       <div 
-        className="aspect-video bg-gray-200 relative overflow-hidden cursor-pointer"
+        className="aspect-video bg-gray-200 dark:bg-zinc-800 relative overflow-hidden cursor-pointer"
         onClick={() => router.push(`/business/${business.id}`)}
       >
         <img 
@@ -140,7 +140,7 @@ export default function FavoritesPage() {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = `https://via.placeholder.com/300x200/e5e7eb/9ca3af?text=${encodeURIComponent(business.name)}`;
+            target.src = `https://via.placeholder.com/300x200/27272a/71717a?text=${encodeURIComponent(business.name)}`;
           }}
         />
         <button
@@ -148,10 +148,10 @@ export default function FavoritesPage() {
             e.stopPropagation();
             removeFavorite(business.id);
           }}
-          className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-2 hover:bg-red-50 transition-colors group/delete"
+          className="absolute top-2 right-2 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm rounded-full p-2 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors group/delete border border-transparent dark:border-red-500/30"
           title="Remove from favorites"
         >
-          <Heart className="w-5 h-5 text-red-500 fill-red-500 group-hover/delete:scale-110 transition-transform" />
+          <Heart className="w-5 h-5 text-red-500 dark:text-red-400 fill-red-500 dark:fill-red-400 group-hover/delete:scale-110 transition-transform" />
         </button>
       </div>
       
@@ -159,25 +159,25 @@ export default function FavoritesPage() {
         className="p-4 cursor-pointer"
         onClick={() => router.push(`/business/${business.id}`)}
       >
-        <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-[#00d4ad] transition-colors duration-200">
+        <h3 className="font-semibold text-slate-800 dark:text-white mb-1 group-hover:text-[#00d4ad] transition-colors duration-200">
           {business.name}
         </h3>
         
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-1">
             <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-            <span className="text-sm font-medium text-slate-700">{business.rating}</span>
-            <span className="text-xs text-slate-500">({business.reviews})</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-zinc-300">{business.rating}</span>
+            <span className="text-xs text-slate-500 dark:text-zinc-400">({business.reviews})</span>
           </div>
           {business.isopen !== undefined && (
-            <span className={`text-xs font-medium ${business.isopen ? 'text-green-600' : 'text-red-600'}`}>
+            <span className={`text-xs font-medium ${business.isopen ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {business.isopen ? 'Open' : 'Closed'}
             </span>
           )}
         </div>
         
-        <div className="flex items-center gap-1 text-slate-600">
-          <MapPin className="w-3 h-3 text-slate-500 flex-shrink-0" />
+        <div className="flex items-center gap-1 text-slate-600 dark:text-zinc-400">
+          <MapPin className="w-3 h-3 text-slate-500 dark:text-zinc-500 flex-shrink-0" />
           <span className="text-xs truncate">{business.location?.split(',')[0] || business.location}</span>
         </div>
         
@@ -190,7 +190,7 @@ export default function FavoritesPage() {
               e.stopPropagation();
               removeFavorite(business.id);
             }}
-            className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1 transition-colors"
+            className="text-xs text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex items-center gap-1 transition-colors"
           >
             <Trash2 className="w-3 h-3" />
             Remove
@@ -201,7 +201,7 @@ export default function FavoritesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       <Header />
 
       <main className="max-w-7xl mx-auto pt-28 px-6 pb-16">
@@ -210,10 +210,10 @@ export default function FavoritesPage() {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <Heart className="w-8 h-8 text-red-500 fill-red-500" />
-                <h1 className="text-3xl font-bold text-slate-800">My Favorites</h1>
+                <Heart className="w-8 h-8 text-red-500 dark:text-red-400 fill-red-500 dark:fill-red-400" />
+                <h1 className="text-3xl font-bold text-slate-800 dark:text-white">My Favorites</h1>
               </div>
-              <p className="text-slate-600">
+              <p className="text-slate-600 dark:text-zinc-400">
                 {favoriteIds.length === 0 
                   ? "You haven't added any favorites yet" 
                   : `${favoriteIds.length} favorite ${favoriteIds.length === 1 ? 'business' : 'businesses'}`}
@@ -224,7 +224,7 @@ export default function FavoritesPage() {
             {favoriteIds.length > 0 && !loading && (
               <button
                 onClick={clearAllFavorites}
-                className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm"
+                className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/70 border border-transparent dark:border-red-800 transition-colors text-sm"
               >
                 <Trash2 className="w-4 h-4" />
                 Clear All
@@ -235,7 +235,7 @@ export default function FavoritesPage() {
 
         {/* Debug Info (remove in production) */}
         {process.env.NODE_ENV === 'development' && (
-          <div className="mb-4 p-4 bg-gray-100 rounded text-xs">
+          <div className="mb-4 p-4 bg-gray-100 dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded text-xs text-gray-900 dark:text-zinc-300">
             <p>Favorite IDs: {JSON.stringify(favoriteIds)}</p>
             <p>Loaded businesses: {favorites.length}</p>
             <p>Loading: {loading.toString()}</p>
@@ -247,7 +247,7 @@ export default function FavoritesPage() {
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <Loader2 className="w-12 h-12 animate-spin text-[#00d4ad] mx-auto mb-4" />
-              <p className="text-slate-600 text-lg">Loading your favorites...</p>
+              <p className="text-slate-600 dark:text-zinc-400 text-lg">Loading your favorites...</p>
             </div>
           </div>
         )}
@@ -255,14 +255,14 @@ export default function FavoritesPage() {
         {/* Empty State */}
         {!loading && favoriteIds.length === 0 && (
           <div className="text-center py-20">
-            <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-slate-700 mb-2">No favorites yet</h2>
-            <p className="text-slate-500 mb-6">
+            <Heart className="w-16 h-16 text-gray-300 dark:text-zinc-600 mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-slate-700 dark:text-zinc-300 mb-2">No favorites yet</h2>
+            <p className="text-slate-500 dark:text-zinc-400 mb-6">
               Start exploring and save your favorite businesses!
             </p>
             <button
               onClick={() => router.push('/')}
-              className="bg-[#00d4ad] text-white px-6 py-3 rounded-lg hover:bg-[#00d4ad] transition-colors"
+              className="bg-[#00d4ad] text-white px-6 py-3 rounded-lg hover:bg-[#00b89a] transition-colors"
             >
               Browse Businesses
             </button>
@@ -272,8 +272,8 @@ export default function FavoritesPage() {
         {/* No Results but have IDs */}
         {!loading && favoriteIds.length > 0 && favorites.length === 0 && (
           <div className="text-center py-20">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-md mx-auto">
-              <p className="text-yellow-800 mb-4">
+            <div className="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 max-w-md mx-auto">
+              <p className="text-yellow-800 dark:text-yellow-400 mb-4">
                 Some favorites couldn't be loaded. They may have been removed from the platform.
               </p>
               <button
@@ -281,7 +281,7 @@ export default function FavoritesPage() {
                   localStorage.setItem("tookdeal:favorites", JSON.stringify([]));
                   setFavoriteIds([]);
                 }}
-                className="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 transition-colors text-sm"
+                className="bg-yellow-600 dark:bg-yellow-700 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 dark:hover:bg-yellow-800 transition-colors text-sm"
               >
                 Clear Invalid Favorites
               </button>
@@ -301,8 +301,8 @@ export default function FavoritesPage() {
         {/* Note about partial results */}
         {!loading && favoriteIds.length > 0 && favorites.length > 0 && favorites.length < favoriteIds.length && (
           <div className="mt-6 text-center">
-            <div className="inline-block bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <p className="text-sm text-yellow-800">
+            <div className="inline-block bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+              <p className="text-sm text-yellow-800 dark:text-yellow-400">
                 {favoriteIds.length - favorites.length} favorite{favoriteIds.length - favorites.length !== 1 ? 's' : ''} couldn't be loaded
               </p>
             </div>

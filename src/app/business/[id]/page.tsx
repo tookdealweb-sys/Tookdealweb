@@ -240,12 +240,12 @@ export default function BusinessDetailPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-white overflow-x-hidden">
+      <div className="min-h-screen overflow-x-hidden">
         <Header />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
-            <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
-            <p className="text-gray-600 text-lg">Loading business details...</p>
+            <Loader2 className="w-12 h-12 animate-spin text-[#00d4ad] mx-auto mb-4" />
+            <p className="text-gray-600 dark:text-zinc-300 text-lg">Loading business details...</p>
           </div>
         </div>
         <Footer />
@@ -256,20 +256,20 @@ export default function BusinessDetailPage() {
   // Error state
   if (error || !business) {
     return (
-      <div className="min-h-screen bg-white overflow-x-hidden">
+      <div className="min-h-screen overflow-x-hidden">
         <Header />
         <div className="flex items-center justify-center min-h-[60vh] px-4">
           <div className="text-center max-w-md w-full">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-              <p className="text-red-600 font-semibold mb-2">
+            <div className="bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg p-6">
+              <p className="text-red-600 dark:text-red-400 font-semibold mb-2">
                 Business Not Found
               </p>
-              <p className="text-red-500 text-sm mb-4">
+              <p className="text-red-500 dark:text-red-300 text-sm mb-4">
                 {error || "The business you are looking for does not exist."}
               </p>
               <button
                 onClick={() => router.push("/")}
-                className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+                className="bg-[#00d4ad] text-white px-6 py-2 rounded-md hover:bg-[#00b89a]"
               >
                 Back to Home
               </button>
@@ -323,7 +323,7 @@ export default function BusinessDetailPage() {
     : "";
 
   return (
-    <div className="min-h-screen bg-white text-gray-800 overflow-x-hidden">
+    <div className="min-h-screen text-gray-800 dark:text-zinc-200 overflow-x-hidden">
       <Header />
 
       {/* Success Message Toast */}
@@ -335,7 +335,7 @@ export default function BusinessDetailPage() {
               <p className="font-semibold">Added to Favorites!</p>
               <button
                 onClick={() => router.push("/favorites")}
-                className="text-sm underline hover:text-[#00d4ad]"
+                className="text-sm underline hover:text-white/80"
               >
                 View all favorites →
               </button>
@@ -349,7 +349,7 @@ export default function BusinessDetailPage() {
         <div className="mb-6">
           <button
             onClick={() => router.push("/")}
-            className="text-blue-600 hover:underline text-sm"
+            className="text-[#00d4ad] hover:underline text-sm"
           >
             ← Back to listings
           </button>
@@ -360,7 +360,7 @@ export default function BusinessDetailPage() {
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mt-3">
             {/* Left side */}
             <div className="flex-1 min-w-0">
-              <h2 className="text-xl md:text-2xl font-semibold break-words">
+              <h2 className="text-xl md:text-2xl font-semibold break-words text-gray-900 dark:text-white">
                 {business.name}
               </h2>
 
@@ -373,14 +373,14 @@ export default function BusinessDetailPage() {
                       className={
                         i < Math.floor(business.rating || 0)
                           ? ""
-                          : "text-gray-300"
+                          : "text-gray-300 dark:text-zinc-600"
                       }
                     >
                       ★
                     </span>
                   ))}
                 </div>
-                <span className="text-gray-600 text-sm">
+                <span className="text-gray-600 dark:text-zinc-400 text-sm">
                   {business.rating || 0} ({reviews.length} reviews)
                 </span>
               </div>
@@ -393,7 +393,7 @@ export default function BusinessDetailPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={handleWhatsAppClick}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00d4ad] to-[#00d4ad] text-white px-4 md:px-6 py-2 rounded-md text-sm font-medium shadow hover:from-[#00d4ad] hover:to-[#00d4ad] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00d4ad] to-[#00b89a] text-white px-4 md:px-6 py-2 rounded-md text-sm font-medium shadow hover:from-[#00b89a] hover:to-[#009a82] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <FaWhatsapp className="text-lg" />
                     {whatsappTracking ? 'Connecting...' : 'WhatsApp'}
@@ -406,7 +406,7 @@ export default function BusinessDetailPage() {
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-gray-700 hover:underline"
+                  className="flex items-center gap-1 text-gray-700 dark:text-zinc-300 hover:underline"
                 >
                   <MdOutlineDirections className="text-xl" />
                   Direction
@@ -421,9 +421,9 @@ export default function BusinessDetailPage() {
                 className="flex items-center gap-1 hover:underline transition-colors"
               >
                 <FaShare
-                  className={shared ? "text-emerald-600" : "text-gray-500"}
+                  className={shared ? "text-emerald-600 dark:text-emerald-400" : "text-gray-500 dark:text-zinc-400"}
                 />
-                <span className={shared ? "text-emerald-600" : "text-gray-600"}>
+                <span className={shared ? "text-emerald-600 dark:text-emerald-400" : "text-gray-600 dark:text-zinc-400"}>
                   {shared ? "Shared" : "Share"}
                 </span>
               </button>
@@ -435,12 +435,12 @@ export default function BusinessDetailPage() {
               >
                 <FaHeart
                   className={`${
-                    isFavorite ? "text-red-500 scale-110" : "text-gray-500"
+                    isFavorite ? "text-red-500 dark:text-red-400 scale-110" : "text-gray-500 dark:text-zinc-400"
                   } transition-all`}
                 />
                 <span
                   className={
-                    isFavorite ? "text-red-500 font-medium" : "text-gray-600"
+                    isFavorite ? "text-red-500 dark:text-red-400 font-medium" : "text-gray-600 dark:text-zinc-400"
                   }
                 >
                   {isFavorite ? "Favorited" : "Add to Favorite"}
@@ -459,8 +459,8 @@ export default function BusinessDetailPage() {
         {/* Reviews */}
         {reviewsLoading ? (
           <div className="mt-12 text-center py-8">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-2" />
-            <p className="text-gray-600">Loading reviews...</p>
+            <Loader2 className="w-8 h-8 animate-spin text-[#00d4ad] mx-auto mb-2" />
+            <p className="text-gray-600 dark:text-zinc-400">Loading reviews...</p>
           </div>
         ) : (
           <Reviews

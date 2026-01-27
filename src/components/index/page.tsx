@@ -85,14 +85,14 @@ export default function BusinessDirectory() {
         (business) =>
           business.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           business.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          business.services?.toLowerCase().includes(searchTerm.toLowerCase())
+          business.services?.toLowerCase().includes(searchTerm.toLowerCase()),
       );
     }
 
     // Filter by category
     if (selectedCategory !== "all") {
       filtered = filtered.filter(
-        (business) => business.category === selectedCategory
+        (business) => business.category === selectedCategory,
       );
     }
 
@@ -104,12 +104,12 @@ export default function BusinessDirectory() {
     if (!businessData) return {};
 
     const grouped: Record<string, Business[]> = {};
-    
+
     // Initialize static categories with empty arrays
     categoryIcons.forEach((cat) => {
       grouped[cat.key] = [];
     });
-    
+
     // Populate with actual businesses
     businessData.forEach((business) => {
       if (!grouped[business.category]) {
@@ -117,21 +117,21 @@ export default function BusinessDirectory() {
       }
       grouped[business.category].push(business);
     });
-    
+
     return grouped;
   }, [businessData]);
 
   const BusinessCard = ({ business }: { business: Business }) => (
     <div
-      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group transform hover:-translate-y-1"
+      className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl hover:shadow-[#00d4ad]/20 transition-all duration-300 cursor-pointer group transform hover:-translate-y-1"
       onClick={() => router.push(`/business/${business.id}`)}
     >
-      <div className="aspect-video bg-gray-200 relative overflow-hidden">
+      <div className="aspect-video bg-gray-200 dark:bg-zinc-800 relative overflow-hidden">
         <img
           src={
             business.image ||
             `https://via.placeholder.com/300x200/e5e7eb/9ca3af?text=${encodeURIComponent(
-              business.name
+              business.name,
             )}`
           }
           alt={business.name}
@@ -139,29 +139,29 @@ export default function BusinessDirectory() {
           onError={(e) => {
             const target = e.target as HTMLImageElement;
             target.src = `https://via.placeholder.com/300x200/e5e7eb/9ca3af?text=${encodeURIComponent(
-              business.name
+              business.name,
             )}`;
           }}
         />
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="bg-white/90 backdrop-blur-sm rounded-full p-2">
+          <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm rounded-full p-2 border border-[#00d4ad]">
             <ExternalLink className="w-4 h-4 text-[#00d4ad]" />
           </div>
         </div>
       </div>
       <div className="p-4">
-        <h3 className="font-semibold text-slate-800 mb-1 group-hover:text-[#00d4ad] transition-colors duration-200 break-words">
+        <h3 className="font-semibold text-slate-800 dark:text-white mb-1 group-hover:text-[#00d4ad] transition-colors duration-200 break-words">
           {business.name}
         </h3>
         {business.category && (
           <div className="mb-2">
-            <span className="inline-block px-2 py-1 bg-[#00d4ad]/10 text-[#00d4ad] text-xs font-medium rounded">
+            <span className="inline-block px-2 py-1 bg-[#00d4ad]/10 dark:bg-[#00d4ad]/20 text-[#00d4ad] text-xs font-medium rounded border border-[#00d4ad]/30">
               {business.category}
             </span>
           </div>
         )}
-        <div className="flex items-center gap-1 text-slate-600 mt-1">
-          <MapPin className="w-3 h-3 text-slate-500 flex-shrink-0" />
+        <div className="flex items-center gap-1 text-slate-600 dark:text-zinc-400 mt-1">
+          <MapPin className="w-3 h-3 text-slate-500 dark:text-zinc-500 flex-shrink-0" />
           <span className="text-xs truncate">
             {business.location?.split(",")[0]}
           </span>
@@ -170,7 +170,9 @@ export default function BusinessDirectory() {
           <div className="mt-2">
             <span
               className={`text-xs font-medium ${
-                business.isopen ? "text-green-600" : "text-red-600"
+                business.isopen
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-red-600 dark:text-red-400"
               }`}
             >
               {business.isopen ? "• Open" : "• Closed"}
@@ -195,12 +197,12 @@ export default function BusinessDirectory() {
     const itemsPerPage = 4;
     const maxIndex = Math.max(
       0,
-      Math.ceil(businesses.length / itemsPerPage) - 1
+      Math.ceil(businesses.length / itemsPerPage) - 1,
     );
 
     const visibleBusinesses = businesses.slice(
       currentIndex * itemsPerPage,
-      (currentIndex + 1) * itemsPerPage
+      (currentIndex + 1) * itemsPerPage,
     );
 
     const nextSlide = () => {
@@ -214,9 +216,9 @@ export default function BusinessDirectory() {
     return (
       <div className="mb-12">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl md:text-2xl font-bold text-slate-800">
+          <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white">
             {title}
-            <span className="ml-2 text-sm font-normal text-slate-500">
+            <span className="ml-2 text-sm font-normal text-slate-500 dark:text-zinc-400">
               ({businesses.length})
             </span>
           </h2>
@@ -224,14 +226,14 @@ export default function BusinessDirectory() {
             <div className="flex gap-2">
               <button
                 onClick={prevSlide}
-                className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-full bg-slate-100 dark:bg-zinc-800 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-transparent dark:border-zinc-700"
                 disabled={businesses.length <= itemsPerPage}
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={nextSlide}
-                className="p-2 rounded-full bg-slate-100 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="p-2 rounded-full bg-slate-100 dark:bg-zinc-800 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-transparent dark:border-zinc-700"
                 disabled={businesses.length <= itemsPerPage}
               >
                 <ChevronRight className="w-5 h-5" />
@@ -246,9 +248,13 @@ export default function BusinessDirectory() {
             ))}
           </div>
         ) : (
-          <div className="bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg p-8 text-center">
-            <p className="text-slate-500">No businesses in this category yet</p>
-            <p className="text-slate-400 text-sm mt-1">Check back soon!</p>
+          <div className="bg-slate-50 dark:bg-zinc-900 border-2 border-dashed border-slate-300 dark:border-zinc-700 rounded-lg p-8 text-center">
+            <p className="text-slate-500 dark:text-zinc-400">
+              No businesses in this category yet
+            </p>
+            <p className="text-slate-400 dark:text-zinc-500 text-sm mt-1">
+              Check back soon!
+            </p>
           </div>
         )}
       </div>
@@ -257,17 +263,19 @@ export default function BusinessDirectory() {
 
   // Get icon for category or use default
   const getCategoryIcon = (categoryKey: string): LucideIcon => {
-    const iconCat = categoryIcons.find(c => c.key === categoryKey);
+    const iconCat = categoryIcons.find((c) => c.key === categoryKey);
     return iconCat ? iconCat.icon : Package;
   };
 
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center overflow-x-hidden">
+      <div className="min-h-screen flex items-center justify-center overflow-x-hidden">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-[#00d4ad] mx-auto mb-4" />
-          <p className="text-slate-600 text-lg">Loading businesses...</p>
+          <p className="text-slate-600 dark:text-zinc-300 text-lg">
+            Loading businesses...
+          </p>
         </div>
       </div>
     );
@@ -276,13 +284,13 @@ export default function BusinessDirectory() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center overflow-x-hidden">
+      <div className="min-h-screen flex items-center justify-center overflow-x-hidden">
         <div className="text-center max-w-md mx-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-            <p className="text-red-600 font-semibold mb-2">
+          <div className="bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg p-6">
+            <p className="text-red-600 dark:text-red-400 font-semibold mb-2">
               Error Loading Data
             </p>
-            <p className="text-red-500 text-sm">{error}</p>
+            <p className="text-red-500 dark:text-red-300 text-sm">{error}</p>
           </div>
         </div>
       </div>
@@ -290,26 +298,26 @@ export default function BusinessDirectory() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-x-hidden mt-18">
+    <div className="min-h-screen overflow-x-hidden mt-18">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white dark:bg-zinc-950 shadow-sm border-b border-gray-200 dark:border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 py-4">
           {/* Search Bar + Filters */}
           <div className="flex flex-col md:flex-row md:items-center md:gap-4 gap-3 mb-6">
             <div className="flex-1 flex gap-2 w-full">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
+                <Search className="absolute left-3 top-3 w-5 h-5 text-slate-400 dark:text-zinc-500" />
                 <input
                   type="text"
                   placeholder="Search for business..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-lg focus:ring-2 text-slate-700 placeholder-slate-400"
+                  className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-lg focus:ring-2 focus:ring-[#00d4ad] text-slate-700 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500"
                 />
               </div>
               <button
                 type="submit"
-                className="px-6 py-3 bg-[#00d4ad] text-white rounded-lg hover:bg-[#3d887a] transition-colors font-medium flex items-center gap-2 whitespace-nowrap"
+                className="px-6 py-3 bg-[#00d4ad] text-white rounded-lg hover:bg-[#00b89a] transition-colors font-medium flex items-center gap-2 whitespace-nowrap"
               >
                 <Search className="w-5 h-5" />
                 <span className="hidden sm:inline">Search</span>
@@ -319,46 +327,41 @@ export default function BusinessDirectory() {
 
           {/* Category Icons - Static predefined categories */}
           <div className="hidden md:block">
-            <div className="flex flex-wrap items-center gap-2 pb-2">
+            <div className="flex flex-wrap items-center gap-2 pb-4">
+              {/* All Categories Button */}
               <button
                 onClick={() => setSelectedCategory("all")}
-                className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 ${
+                className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
                   selectedCategory === "all"
-                    ? "bg-[#00d4ad] text-white"
-                    : "text-slate-600 hover:bg-[#00d4ad] hover:text-white"
+                    ? "bg-[#1ed760] text-black"
+                    : "bg-zinc-800 text-white hover:bg-zinc-700"
                 }`}
               >
-                <ShoppingCart className="w-6 h-6 mb-2" />
-                <span className="text-xs font-medium text-center whitespace-nowrap">
-                  All
-                </span>
+                <ShoppingCart className="w-4 h-4" />
+                All
               </button>
 
+              {/* Category Buttons */}
               {categoryIcons.map((category) => {
                 const IconComponent = category.icon;
-                const businessCount = businessesByCategory[category.key]?.length || 0;
+                const businessCount =
+                  businessesByCategory[category.key]?.length || 0;
 
                 return (
                   <button
                     key={category.key}
                     onClick={() => setSelectedCategory(category.key)}
-                    className={`flex flex-col items-center min-w-[5rem] p-3 rounded-lg transition-all duration-200 flex-shrink-0 relative ${
+                    className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
                       selectedCategory === category.key
-                        ? "bg-[#00d4ad] text-white"
-                        : businessCount > 0 
-                        ? "text-slate-600 hover:bg-[#00d4ad] hover:text-white"
-                        : "text-slate-400 hover:bg-slate-100"
+                        ? "bg-[#1ed760] text-black"
+                        : businessCount > 0
+                          ? "bg-zinc-800 text-white hover:bg-zinc-700"
+                          : "bg-zinc-900 text-zinc-600 cursor-not-allowed opacity-60"
                     }`}
+                    disabled={businessCount === 0}
                   >
-                    <IconComponent className="w-6 h-6 mb-2" />
-                    <span className="text-xs font-medium text-center whitespace-nowrap">
-                      {category.label}
-                    </span>
-                    {businessCount > 0 && (
-                      <span className="absolute top-1 right-1 bg-[#00d4ad] text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center font-semibold">
-                        {businessCount}
-                      </span>
-                    )}
+                    <IconComponent className="w-4 h-4" />
+                    {category.label}
                   </button>
                 );
               })}
@@ -374,7 +377,7 @@ export default function BusinessDirectory() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[#00d4ad] text-slate-700 bg-white w-full sm:w-auto"
+            className="px-4 py-2 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-lg focus:ring-2 focus:ring-[#00d4ad] text-slate-700 dark:text-white w-full sm:w-auto"
           >
             <option value="all">All Categories</option>
             {databaseCategories.map((cat) => {
@@ -389,22 +392,22 @@ export default function BusinessDirectory() {
 
           {/* Advanced Filters Button */}
           <button
-            onClick={() => router.push('/search')}
-            className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors w-full sm:w-auto justify-center bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-300"
+            onClick={() => router.push("/search")}
+            className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors w-full sm:w-auto justify-center bg-slate-100 dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800 border border-slate-300 dark:border-zinc-700"
           >
             <Search className="w-4 h-4" />
             <span className="text-sm">Advanced Filters</span>
           </button>
 
-          <div className="text-sm text-slate-600 font-medium sm:ml-auto text-center sm:text-left">
+          {/* <div className="text-sm text-slate-600 dark:text-zinc-400 font-medium sm:ml-auto text-center sm:text-left">
             {filteredBusinesses.length} businesses found
-          </div>
+          </div> */}
         </div>
 
         {/* Search Results */}
         {searchTerm && (
           <div className="mb-12">
-            <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6 break-words">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white mb-6 break-words">
               Search Results for "
               <span className="text-[#00d4ad]">{searchTerm}</span>"
             </h2>
@@ -415,10 +418,10 @@ export default function BusinessDirectory() {
             </div>
             {filteredBusinesses.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-slate-500 text-lg">
+                <p className="text-slate-500 dark:text-zinc-400 text-lg">
                   No businesses found matching your search.
                 </p>
-                <p className="text-slate-400 text-sm mt-2">
+                <p className="text-slate-400 dark:text-zinc-500 text-sm mt-2">
                   Try different keywords or check your spelling.
                 </p>
               </div>
@@ -431,7 +434,7 @@ export default function BusinessDirectory() {
           <>
             {databaseCategories.map((category) => {
               const businesses = businessesByCategory[category] || [];
-              
+
               return (
                 <SectionCarousel
                   key={category}
@@ -446,7 +449,7 @@ export default function BusinessDirectory() {
         {/* All Results when filtering */}
         {selectedCategory !== "all" && !searchTerm && (
           <div className="mb-12">
-            <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6">
+            <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white mb-6">
               Filtered Results
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
@@ -456,10 +459,10 @@ export default function BusinessDirectory() {
             </div>
             {filteredBusinesses.length === 0 && (
               <div className="text-center py-12">
-                <p className="text-slate-500 text-lg">
+                <p className="text-slate-500 dark:text-zinc-400 text-lg">
                   No businesses found matching your filters.
                 </p>
-                <p className="text-slate-400 text-sm mt-2">
+                <p className="text-slate-400 dark:text-zinc-500 text-sm mt-2">
                   Try adjusting your search criteria.
                 </p>
               </div>
