@@ -108,24 +108,18 @@ const Footer = () => {
               {/* Support */}
               <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-zinc-400">
                 <Globe className="h-4 w-4" />
-                <span>24×7 Support:</span>
+                <span>24/7 Support:</span>
                 <a
-                  href="tel:+919876543210"
+                  href="tel:+919048952562"
                   className="text-gray-900 dark:text-white font-medium hover:text-[#00d4ad] dark:hover:text-[#00d4ad] transition-colors duration-200"
                 >
+                
                   +91 9048952562
                 </a>
               </div>
 
               {/* Social Icons */}
               <div className="flex items-center space-x-3">
-                {/* <Link
-                  href="#"
-                  aria-label="Facebook"
-                  className="text-gray-400 hover:text-blue-600 transition-colors duration-200"
-                >
-                  <Facebook className="h-5 w-5" />
-                </Link> */}
                 <Link
                   href="https://x.com/tookdeal"
                   aria-label="Twitter"
@@ -142,6 +136,21 @@ const Footer = () => {
                 </Link>
               </div>
             </div>
+          </div>
+          
+          {/* Designed by Tascbar */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-500 dark:text-zinc-500">
+              Designed by{" "}
+              <a
+                href="https://tascbar.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-gray-700 dark:text-zinc-300 hover:text-[#00d4ad] dark:hover:text-[#00d4ad] transition-colors duration-200"
+              >
+                Tascbar.com
+              </a>
+            </p>
           </div>
         </div>
       </div>
