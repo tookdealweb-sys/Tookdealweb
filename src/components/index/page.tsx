@@ -28,6 +28,8 @@ import {
   Wrench,
   ShoppingCart,
   Package,
+  Pill,
+  Leaf,
 } from "lucide-react";
 import { useBusinessData } from "@/hooks/useBusinessData";
 import { Business } from "@/types/business";
@@ -55,6 +57,8 @@ const categoryIcons: Category[] = [
   { key: "officeSupply", label: "Office Supply", icon: Briefcase },
   { key: "travelAccessories", label: "Travel Accessories", icon: Plane },
   { key: "tools", label: "Tools", icon: Wrench },
+  { key: "pharmaSurgicals", label: "Pharma & Surgicals", icon: Pill },
+  { key: "plantsNursery", label: "Plants & Nursery", icon: Leaf },
 ];
 
 export default function BusinessDirectory() {

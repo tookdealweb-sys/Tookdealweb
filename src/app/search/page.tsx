@@ -63,6 +63,8 @@ const defaultCategories: Category[] = [
   { value: 'officeSupply', label: 'Office Supply' },
   { value: 'travelAccessories', label: 'Travel Accessories' },
   { value: 'tools', label: 'Tools' },
+  { value: 'pharmaSurgicals', label: 'Pharma & Surgicals' },
+  { value: 'plantsNursery', label: 'Plants & Nursery' },
 ];
 
 function SearchPageContent() {

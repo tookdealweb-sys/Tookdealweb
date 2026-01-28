@@ -24,7 +24,8 @@ const defaultCategories = [
   { value: 'seasonalItems', label: 'Seasonal Items' },
   { value: 'officeSupply', label: 'Office Supply' },
   { value: 'travelAccessories', label: 'Travel Accessories' },
-  { value: 'tools', label: 'Tools' },
+  { value: 'pharmaSurgicals', label: 'pharma & Surgicals' },
+  { value: 'plantsNursery', label: 'plants & Nursery' },
   { value: 'other', label: 'Other (Specify)' },
 ];
 
@@ -545,21 +546,21 @@ export default function AddBusinessPage() {
                     <div className="space-y-2">
                       {schedule[day].map((slot, index) => (
                         <div key={index} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                          <label className="text-sm text-gray-600 font-medium min-w-[60px]">
+                          <label className="text-sm text-black font-medium min-w-[60px]">
                             {index === 0 ? 'Opens:' : `Slot ${index + 1}:`}
                           </label>
                           <input
                             type="time"
                             value={slot.open}
                             onChange={(e) => updateTimeSlot(day, index, 'open', e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                            className="px-3 py-2 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                           />
                           <span className="text-gray-500 font-medium">to</span>
                           <input
                             type="time"
                             value={slot.close}
                             onChange={(e) => updateTimeSlot(day, index, 'close', e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                            className="px-3 py-2 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                           />
                           <button
                             type="button"

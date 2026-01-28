@@ -26,6 +26,8 @@ const defaultCategories = [
   { value: 'travelAccessories', label: 'Travel Accessories' },
   { value: 'tools', label: 'Tools' },
   { value: 'other', label: 'Other (Specify)' },
+  { value: 'pharmaSurgicals', label: 'Pharma & Surgicals' },
+  { value: 'plantsNursery', label: 'Plants & Nursery' },  
 ];
 
 const priceRanges = [
@@ -609,14 +611,14 @@ export default function EditBusinessPage() {
                             type="time"
                             value={slot.open}
                             onChange={(e) => updateTimeSlot(day, index, 'open', e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                            className="px-3 py-2 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                           />
                           <span className="text-gray-500 font-medium">to</span>
                           <input
                             type="time"
                             value={slot.close}
                             onChange={(e) => updateTimeSlot(day, index, 'close', e.target.value)}
-                            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+                            className="px-3 py-2 border text-black border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent"
                           />
                           <button
                             type="button"
