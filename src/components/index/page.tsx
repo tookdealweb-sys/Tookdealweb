@@ -218,9 +218,6 @@ export default function BusinessDirectory() {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white">
             {title}
-            <span className="ml-2 text-sm font-normal text-slate-500 dark:text-zinc-400">
-              ({businesses.length})
-            </span>
           </h2>
           {businesses.length > 0 && (
             <div className="flex gap-2">
@@ -325,43 +322,71 @@ export default function BusinessDirectory() {
             </div>
           </div>
 
-          {/* Category Icons - Static predefined categories */}
-          <div className="hidden md:block">
-            <div className="flex flex-wrap items-center gap-2 pb-4">
+          {/* Category Icons - Same design for ALL screen sizes */}
+          <div className="mb-4">
+            {/* Mobile & Desktop: Grid Layout with Card Style */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {/* All Categories Button */}
               <button
                 onClick={() => setSelectedCategory("all")}
-                className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                className={`relative overflow-hidden rounded-2xl min-h-[90px] flex items-center transition-all duration-200 ${
                   selectedCategory === "all"
-                    ? "bg-[#1ed760] text-black"
-                    : "bg-zinc-800 text-white hover:bg-zinc-700"
+                    ? "bg-[#00d4ad]"
+                    : "bg-zinc-800/80 hover:bg-zinc-700/80"
                 }`}
               >
-                <ShoppingCart className="w-4 h-4" />
-                All
+                <div className={`w-[90px] h-full flex items-center justify-center flex-shrink-0 ${
+                  selectedCategory === "all" ? "bg-[#00b89a]" : "bg-zinc-900/50"
+                }`}>
+                  <ShoppingCart className="w-8 h-8 text-white" />
+                </div>
+                <div className="flex-1 px-3 flex items-center justify-center">
+                  <span className="text-base font-bold text-white">All</span>
+                </div>
               </button>
 
               {/* Category Buttons */}
               {categoryIcons.map((category) => {
                 const IconComponent = category.icon;
-                const businessCount =
-                  businessesByCategory[category.key]?.length || 0;
+                const businessCount = businessesByCategory[category.key]?.length || 0;
+                const isActive = selectedCategory === category.key;
+                const isEmpty = businessCount === 0;
+
+                // Generate background colors based on category
+                const colors = [
+                  { main: "#10b981", icon: "#059669" }, // green
+                  { main: "#8b5cf6", icon: "#7c3aed" }, // purple
+                  { main: "#06b6d4", icon: "#0891b2" }, // cyan
+                  { main: "#f59e0b", icon: "#d97706" }, // amber
+                  { main: "#ec4899", icon: "#db2777" }, // pink
+                  { main: "#3b82f6", icon: "#2563eb" }, // blue
+                  { main: "#ef4444", icon: "#dc2626" }, // red
+                  { main: "#14b8a6", icon: "#0d9488" }, // teal
+                ];
+                const colorIndex = categoryIcons.findIndex(c => c.key === category.key) % colors.length;
+                const color = isEmpty ? { main: "#3f3f46", icon: "#27272a" } : colors[colorIndex];
 
                 return (
                   <button
                     key={category.key}
-                    onClick={() => setSelectedCategory(category.key)}
-                    className={`px-6 py-2.5 rounded-full text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
-                      selectedCategory === category.key
-                        ? "bg-[#1ed760] text-black"
-                        : businessCount > 0
-                          ? "bg-zinc-800 text-white hover:bg-zinc-700"
-                          : "bg-zinc-900 text-zinc-600 cursor-not-allowed opacity-60"
+                    onClick={() => !isEmpty && setSelectedCategory(category.key)}
+                    disabled={isEmpty}
+                    className={`relative overflow-hidden rounded-2xl min-h-[90px] flex items-center transition-all duration-200 ${
+                      isEmpty ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
                     }`}
-                    disabled={businessCount === 0}
+                    style={{ backgroundColor: isActive ? "#00d4ad" : color.main }}
                   >
-                    <IconComponent className="w-4 h-4" />
-                    {category.label}
+                    <div 
+                      className="w-[90px] h-full flex items-center justify-center flex-shrink-0"
+                      style={{ backgroundColor: isActive ? "#00b89a" : color.icon }}
+                    >
+                      <IconComponent className="w-8 h-8 text-white" />
+                    </div>
+                    <div className="flex-1 px-3 flex items-center justify-center">
+                      <span className="text-sm font-bold text-white leading-tight text-center">
+                        {category.label}
+                      </span>
+                    </div>
                   </button>
                 );
               })}
@@ -381,10 +406,9 @@ export default function BusinessDirectory() {
           >
             <option value="all">All Categories</option>
             {databaseCategories.map((cat) => {
-              const businessCount = businessesByCategory[cat]?.length || 0;
               return (
                 <option key={cat} value={cat}>
-                  {cat} ({businessCount})
+                  {cat}
                 </option>
               );
             })}
@@ -398,10 +422,6 @@ export default function BusinessDirectory() {
             <Search className="w-4 h-4" />
             <span className="text-sm">Advanced Filters</span>
           </button>
-
-          {/* <div className="text-sm text-slate-600 dark:text-zinc-400 font-medium sm:ml-auto text-center sm:text-left">
-            {filteredBusinesses.length} businesses found
-          </div> */}
         </div>
 
         {/* Search Results */}
