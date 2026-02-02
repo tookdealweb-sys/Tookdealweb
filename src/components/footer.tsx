@@ -148,8 +148,7 @@ const Footer = () => {
                 rel="noopener noreferrer"
                 className="font-medium text-gray-700 dark:text-zinc-300 hover:text-[#00d4ad] dark:hover:text-[#00d4ad] transition-colors duration-200"
               >
-                Tascbar.com
-              </a>
+                Tascbar              </a>
             </p>
           </div>
         </div>

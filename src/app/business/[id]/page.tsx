@@ -240,7 +240,7 @@ export default function BusinessDetailPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen overflow-x-hidden">
+      <div className="min-h-screen bg-white dark:bg-zinc-950 overflow-x-hidden">
         <Header />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -256,7 +256,7 @@ export default function BusinessDetailPage() {
   // Error state
   if (error || !business) {
     return (
-      <div className="min-h-screen overflow-x-hidden">
+      <div className="min-h-screen bg-white dark:bg-zinc-950 overflow-x-hidden">
         <Header />
         <div className="flex items-center justify-center min-h-[60vh] px-4">
           <div className="text-center max-w-md w-full">
@@ -269,7 +269,7 @@ export default function BusinessDetailPage() {
               </p>
               <button
                 onClick={() => router.push("/")}
-                className="bg-[#00d4ad] text-white px-6 py-2 rounded-md hover:bg-[#00b89a]"
+                className="bg-[#00d4ad] text-white px-6 py-2 rounded-md hover:bg-[#00b89a] transition-colors shadow-sm"
               >
                 Back to Home
               </button>
@@ -323,7 +323,7 @@ export default function BusinessDetailPage() {
     : "";
 
   return (
-    <div className="min-h-screen text-gray-800 dark:text-zinc-200 overflow-x-hidden">
+    <div className="min-h-screen bg-white dark:bg-zinc-950 text-gray-800 dark:text-zinc-200 overflow-x-hidden">
       <Header />
 
       {/* Success Message Toast */}
@@ -335,7 +335,7 @@ export default function BusinessDetailPage() {
               <p className="font-semibold">Added to Favorites!</p>
               <button
                 onClick={() => router.push("/favorites")}
-                className="text-sm underline hover:text-white/80"
+                className="text-sm underline hover:text-white/80 transition-colors"
               >
                 View all favorites →
               </button>
@@ -349,7 +349,7 @@ export default function BusinessDetailPage() {
         <div className="mb-6">
           <button
             onClick={() => router.push("/")}
-            className="text-[#00d4ad] hover:underline text-sm"
+            className="text-[#00d4ad] dark:text-[#00e4bd] hover:underline text-sm transition-colors"
           >
             ← Back to listings
           </button>
@@ -393,7 +393,7 @@ export default function BusinessDetailPage() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={handleWhatsAppClick}
-                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00d4ad] to-[#00b89a] text-white px-4 md:px-6 py-2 rounded-md text-sm font-medium shadow hover:from-[#00b89a] hover:to-[#009a82] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[#00d4ad] to-[#00b89a] text-white px-4 md:px-6 py-2 rounded-md text-sm font-medium shadow-md hover:shadow-lg hover:from-[#00b89a] hover:to-[#009a82] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <FaWhatsapp className="text-lg" />
                     {whatsappTracking ? 'Connecting...' : 'WhatsApp'}
@@ -406,7 +406,7 @@ export default function BusinessDetailPage() {
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1 text-gray-700 dark:text-zinc-300 hover:underline"
+                  className="flex items-center gap-1 text-gray-700 dark:text-zinc-300 hover:text-[#00d4ad] dark:hover:text-[#00e4bd] hover:underline transition-colors"
                 >
                   <MdOutlineDirections className="text-xl" />
                   Direction
@@ -423,7 +423,7 @@ export default function BusinessDetailPage() {
                 <FaShare
                   className={shared ? "text-emerald-600 dark:text-emerald-400" : "text-gray-500 dark:text-zinc-400"}
                 />
-                <span className={shared ? "text-emerald-600 dark:text-emerald-400" : "text-gray-600 dark:text-zinc-400"}>
+                <span className={shared ? "text-emerald-600 dark:text-emerald-400 font-medium" : "text-gray-600 dark:text-zinc-400"}>
                   {shared ? "Shared" : "Share"}
                 </span>
               </button>

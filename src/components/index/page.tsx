@@ -125,9 +125,23 @@ export default function BusinessDirectory() {
     return grouped;
   }, [businessData]);
 
+  // Handle search navigation
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      router.push(`/search?query=${encodeURIComponent(searchTerm.trim())}`);
+    }
+  };
+
+  // Handle Enter key press
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   const BusinessCard = ({ business }: { business: Business }) => (
     <div
-      className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl hover:shadow-[#00d4ad]/20 transition-all duration-300 cursor-pointer group transform hover:-translate-y-1"
+      className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg shadow-md overflow-hidden hover:shadow-xl hover:shadow-[#00d4ad]/20 dark:hover:shadow-[#00d4ad]/10 transition-all duration-300 cursor-pointer group transform hover:-translate-y-1"
       onClick={() => router.push(`/business/${business.id}`)}
     >
       <div className="aspect-video bg-gray-200 dark:bg-zinc-800 relative overflow-hidden">
@@ -159,7 +173,7 @@ export default function BusinessDirectory() {
         </h3>
         {business.category && (
           <div className="mb-2">
-            <span className="inline-block px-2 py-1 bg-[#00d4ad]/10 dark:bg-[#00d4ad]/20 text-[#00d4ad] text-xs font-medium rounded border border-[#00d4ad]/30">
+            <span className="inline-block px-2 py-1 bg-[#00d4ad]/10 dark:bg-[#00d4ad]/20 text-[#00d4ad] dark:text-[#00e4bd] text-xs font-medium rounded border border-[#00d4ad]/30 dark:border-[#00d4ad]/50">
               {business.category}
             </span>
           </div>
@@ -183,7 +197,7 @@ export default function BusinessDirectory() {
             </span>
           </div>
         )}
-        <div className="mt-2 text-xs text-[#00d4ad] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="mt-2 text-xs text-[#00d4ad] dark:text-[#00e4bd] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           View Details →
         </div>
       </div>
@@ -227,14 +241,14 @@ export default function BusinessDirectory() {
             <div className="flex gap-2">
               <button
                 onClick={prevSlide}
-                className="p-2 rounded-full bg-slate-100 dark:bg-zinc-800 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-transparent dark:border-zinc-700"
+                className="p-2 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-[#00d4ad] hover:text-white dark:hover:bg-[#00d4ad] dark:hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-slate-200 dark:border-zinc-700"
                 disabled={businesses.length <= itemsPerPage}
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
               <button
                 onClick={nextSlide}
-                className="p-2 rounded-full bg-slate-100 dark:bg-zinc-800 hover:bg-[#00d4ad] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-transparent dark:border-zinc-700"
+                className="p-2 rounded-full bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 hover:bg-[#00d4ad] hover:text-white dark:hover:bg-[#00d4ad] dark:hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-slate-200 dark:border-zinc-700"
                 disabled={businesses.length <= itemsPerPage}
               >
                 <ChevronRight className="w-5 h-5" />
@@ -271,7 +285,7 @@ export default function BusinessDirectory() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center overflow-x-hidden">
+      <div className="min-h-screen bg-white dark:bg-zinc-950 flex items-center justify-center overflow-x-hidden">
         <div className="text-center">
           <Loader2 className="w-12 h-12 animate-spin text-[#00d4ad] mx-auto mb-4" />
           <p className="text-slate-600 dark:text-zinc-300 text-lg">
@@ -285,7 +299,7 @@ export default function BusinessDirectory() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center overflow-x-hidden">
+      <div className="min-h-screen bg-white dark:bg-zinc-950 flex items-center justify-center overflow-x-hidden">
         <div className="text-center max-w-md mx-4">
           <div className="bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg p-6">
             <p className="text-red-600 dark:text-red-400 font-semibold mb-2">
@@ -299,7 +313,7 @@ export default function BusinessDirectory() {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden mt-18">
+    <div className="min-h-screen bg-white dark:bg-zinc-950 overflow-x-hidden mt-18">
       {/* Header */}
       <header className="bg-white dark:bg-zinc-950 shadow-sm border-b border-gray-200 dark:border-zinc-800">
         <div className="max-w-7xl mx-auto px-4 py-4">
@@ -313,12 +327,13 @@ export default function BusinessDirectory() {
                   placeholder="Search for business..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-lg focus:ring-2 focus:ring-[#00d4ad] text-slate-700 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500"
+                  onKeyDown={handleKeyDown}
+                  className="w-full pl-10 pr-4 py-3 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-lg focus:ring-2 focus:ring-[#00d4ad] focus:border-[#00d4ad] text-slate-700 dark:text-white placeholder-slate-400 dark:placeholder-zinc-500 transition-colors"
                 />
               </div>
               <button
-                type="submit"
-                className="px-6 py-3 bg-[#00d4ad] text-white rounded-lg hover:bg-[#00b89a] transition-colors font-medium flex items-center gap-2 whitespace-nowrap"
+                onClick={handleSearch}
+                className="px-6 py-3 bg-[#00d4ad] text-white rounded-lg hover:bg-[#00b89a] transition-colors font-medium flex items-center gap-2 whitespace-nowrap shadow-sm hover:shadow-md"
               >
                 <Search className="w-5 h-5" />
                 <span className="hidden sm:inline">Search</span>
@@ -326,26 +341,35 @@ export default function BusinessDirectory() {
             </div>
           </div>
 
-          {/* Category Icons - Same design for ALL screen sizes */}
+          {/* Category Icons - Grid Layout */}
           <div className="mb-4">
-            {/* Mobile & Desktop: Grid Layout with Card Style */}
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {/* All Categories Button */}
               <button
                 onClick={() => setSelectedCategory("all")}
-                className={`relative overflow-hidden rounded-2xl min-h-[90px] flex items-center transition-all duration-200 ${
+                className={`relative overflow-hidden rounded-2xl min-h-[90px] flex items-center transition-all duration-200 shadow-sm hover:shadow-md ${
                   selectedCategory === "all"
-                    ? "bg-[#00d4ad]"
-                    : "bg-zinc-800/80 hover:bg-zinc-700/80"
+                    ? "bg-[#00d4ad] dark:bg-[#00d4ad]"
+                    : "bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700"
                 }`}
               >
                 <div className={`w-[90px] h-full flex items-center justify-center flex-shrink-0 ${
-                  selectedCategory === "all" ? "bg-[#00b89a]" : "bg-zinc-900/50"
+                  selectedCategory === "all" 
+                    ? "bg-[#00b89a] dark:bg-[#00b89a]" 
+                    : "bg-slate-200 dark:bg-zinc-900"
                 }`}>
-                  <ShoppingCart className="w-8 h-8 text-white" />
+                  <ShoppingCart className={`w-8 h-8 ${
+                    selectedCategory === "all" 
+                      ? "text-white" 
+                      : "text-slate-700 dark:text-zinc-300"
+                  }`} />
                 </div>
                 <div className="flex-1 px-3 flex items-center justify-center">
-                  <span className="text-base font-bold text-white">All</span>
+                  <span className={`text-base font-bold ${
+                    selectedCategory === "all" 
+                      ? "text-white" 
+                      : "text-slate-800 dark:text-zinc-200"
+                  }`}>All</span>
                 </div>
               </button>
 
@@ -358,36 +382,48 @@ export default function BusinessDirectory() {
 
                 // Generate background colors based on category
                 const colors = [
-                  { main: "#10b981", icon: "#059669" }, // green
-                  { main: "#8b5cf6", icon: "#7c3aed" }, // purple
-                  { main: "#06b6d4", icon: "#0891b2" }, // cyan
-                  { main: "#f59e0b", icon: "#d97706" }, // amber
-                  { main: "#ec4899", icon: "#db2777" }, // pink
-                  { main: "#3b82f6", icon: "#2563eb" }, // blue
-                  { main: "#ef4444", icon: "#dc2626" }, // red
-                  { main: "#14b8a6", icon: "#0d9488" }, // teal
+                  { main: "#10b981", icon: "#059669", mainDark: "#059669", iconDark: "#047857" }, // green
+                  { main: "#8b5cf6", icon: "#7c3aed", mainDark: "#7c3aed", iconDark: "#6d28d9" }, // purple
+                  { main: "#06b6d4", icon: "#0891b2", mainDark: "#0891b2", iconDark: "#0e7490" }, // cyan
+                  { main: "#f59e0b", icon: "#d97706", mainDark: "#d97706", iconDark: "#b45309" }, // amber
+                  { main: "#ec4899", icon: "#db2777", mainDark: "#db2777", iconDark: "#be185d" }, // pink
+                  { main: "#3b82f6", icon: "#2563eb", mainDark: "#2563eb", iconDark: "#1d4ed8" }, // blue
+                  { main: "#ef4444", icon: "#dc2626", mainDark: "#dc2626", iconDark: "#b91c1c" }, // red
+                  { main: "#14b8a6", icon: "#0d9488", mainDark: "#0d9488", iconDark: "#0f766e" }, // teal
                 ];
                 const colorIndex = categoryIcons.findIndex(c => c.key === category.key) % colors.length;
-                const color = isEmpty ? { main: "#3f3f46", icon: "#27272a" } : colors[colorIndex];
+                const color = isEmpty 
+                  ? { main: "#e5e7eb", icon: "#d1d5db", mainDark: "#3f3f46", iconDark: "#27272a" } 
+                  : colors[colorIndex];
 
                 return (
                   <button
                     key={category.key}
                     onClick={() => !isEmpty && setSelectedCategory(category.key)}
                     disabled={isEmpty}
-                    className={`relative overflow-hidden rounded-2xl min-h-[90px] flex items-center transition-all duration-200 ${
-                      isEmpty ? "opacity-50 cursor-not-allowed" : "hover:opacity-90"
+                    className={`relative overflow-hidden rounded-2xl min-h-[90px] flex items-center transition-all duration-200 shadow-sm ${
+                      isEmpty ? "opacity-50 cursor-not-allowed" : "hover:shadow-md hover:opacity-90"
                     }`}
-                    style={{ backgroundColor: isActive ? "#00d4ad" : color.main }}
+                    style={{ 
+                      backgroundColor: isActive 
+                        ? "#00d4ad" 
+                        : `light-dark(${color.main}, ${color.mainDark})`
+                    }}
                   >
                     <div 
-                      className="w-[90px] h-full flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: isActive ? "#00b89a" : color.icon }}
+                      className="w-[90px] h-full flex items-center justify-center flex-shrink-0 dark:opacity-90"
+                      style={{ 
+                        backgroundColor: isActive 
+                          ? "#00b89a" 
+                          : `light-dark(${color.icon}, ${color.iconDark})`
+                      }}
                     >
-                      <IconComponent className="w-8 h-8 text-white" />
+                      <IconComponent className={`w-8 h-8 ${isEmpty ? 'text-slate-400 dark:text-zinc-600' : 'text-white'}`} />
                     </div>
                     <div className="flex-1 px-3 flex items-center justify-center">
-                      <span className="text-sm font-bold text-white leading-tight text-center">
+                      <span className={`text-xs font-bold leading-tight text-center ${
+                        isEmpty ? 'text-slate-500 dark:text-zinc-500' : 'text-white'
+                      }`}>
                         {category.label}
                       </span>
                     </div>
@@ -406,7 +442,7 @@ export default function BusinessDirectory() {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="px-4 py-2 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-lg focus:ring-2 focus:ring-[#00d4ad] text-slate-700 dark:text-white w-full sm:w-auto"
+            className="px-4 py-2 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-lg focus:ring-2 focus:ring-[#00d4ad] focus:border-[#00d4ad] text-slate-700 dark:text-white w-full sm:w-auto transition-colors"
           >
             <option value="all">All Categories</option>
             {databaseCategories.map((cat) => {
@@ -421,7 +457,7 @@ export default function BusinessDirectory() {
           {/* Advanced Filters Button */}
           <button
             onClick={() => router.push("/search")}
-            className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors w-full sm:w-auto justify-center bg-slate-100 dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800 border border-slate-300 dark:border-zinc-700"
+            className="px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors w-full sm:w-auto justify-center bg-slate-100 dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800 border border-slate-300 dark:border-zinc-700 shadow-sm"
           >
             <Search className="w-4 h-4" />
             <span className="text-sm">Advanced Filters</span>
@@ -433,7 +469,7 @@ export default function BusinessDirectory() {
           <div className="mb-12">
             <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white mb-6 break-words">
               Search Results for "
-              <span className="text-[#00d4ad]">{searchTerm}</span>"
+              <span className="text-[#00d4ad] dark:text-[#00e4bd]">{searchTerm}</span>"
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {filteredBusinesses.slice(0, 8).map((business) => (

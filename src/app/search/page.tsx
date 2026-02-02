@@ -282,10 +282,10 @@ function SearchPageContent() {
       <div className="border-b border-gray-200 dark:border-zinc-700 pb-4 mb-4">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex justify-between items-center w-full text-left font-medium text-gray-900 dark:text-white mb-3"
+          className="flex justify-between items-center w-full text-left font-medium text-gray-900 dark:text-white mb-3 hover:text-[#00d4ad] dark:hover:text-[#00e4bd] transition-colors"
         >
           {title}
-          <span className={`transform transition-transform ${isOpen ? 'rotate-180' : ''}`}>
+          <span className={`transform transition-transform text-gray-600 dark:text-zinc-400 ${isOpen ? 'rotate-180' : ''}`}>
             ▼
           </span>
         </button>
@@ -295,7 +295,7 @@ function SearchPageContent() {
             {shouldShowMore && (
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="text-[#00d4ad] text-sm hover:underline font-medium mt-2"
+                className="text-[#00d4ad] dark:text-[#00e4bd] text-sm hover:underline font-medium mt-2"
               >
                 {showAll ? '- Show Less' : `+ Show More (${childrenArray.length - showMoreLimit} more)`}
               </button>
@@ -307,26 +307,26 @@ function SearchPageContent() {
   };
 
   const CheckboxFilter = ({ filterType, value, label, checked }: any) => (
-    <label className="flex items-center space-x-2 cursor-pointer">
+    <label className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 dark:hover:bg-zinc-800/50 p-1 rounded transition-colors">
       <input
         type="checkbox"
         checked={checked}
         onChange={(e) => handleFilterChange(filterType, value, e.target.checked)}
-        className="w-4 h-4 text-[#00d4ad] border-gray-300 dark:border-zinc-600 rounded focus:ring-[#00d4ad]"
+        className="w-4 h-4 text-[#00d4ad] bg-white dark:bg-zinc-800 border-gray-300 dark:border-zinc-600 rounded focus:ring-[#00d4ad] focus:ring-2"
       />
       <span className="text-sm text-gray-700 dark:text-zinc-300">{label}</span>
     </label>
   );
 
   const FilterSidebar = () => (
-    <div className="bg-white dark:bg-zinc-900 rounded-lg shadow border border-transparent dark:border-zinc-800 p-4 h-full overflow-y-auto">
+    <div className="bg-white dark:bg-zinc-900 rounded-lg shadow border border-gray-200 dark:border-zinc-800 p-4 h-full overflow-y-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-semibold text-gray-900 dark:text-white">Filter</h2>
         <div className="flex items-center gap-2">
-          <button onClick={resetFilters} className="text-[#00d4ad] text-sm hover:underline">
+          <button onClick={resetFilters} className="text-[#00d4ad] dark:text-[#00e4bd] text-sm hover:underline font-medium">
             Reset
           </button>
-          <button onClick={() => setIsMobileFilterOpen(false)} className="lg:hidden text-gray-600 dark:text-zinc-400 hover:text-gray-800 dark:hover:text-white">
+          <button onClick={() => setIsMobileFilterOpen(false)} className="lg:hidden text-gray-600 dark:text-zinc-400 hover:text-gray-800 dark:hover:text-white transition-colors">
             <X size={20} />
           </button>
         </div>
@@ -371,7 +371,7 @@ function SearchPageContent() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-white dark:bg-zinc-950">
         <SearchHeader/>
         <div className="max-w-7xl mx-auto px-4 py-12 pt-24">
           <div className="flex flex-col justify-center items-center">
@@ -387,13 +387,13 @@ function SearchPageContent() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-white dark:bg-zinc-950">
         <SearchHeader/>
         <div className="max-w-7xl mx-auto px-4 py-12 pt-24">
           <div className="bg-red-50 dark:bg-red-950/50 border border-red-200 dark:border-red-800 rounded-lg p-6 text-center">
             <p className="text-red-800 dark:text-red-400 font-semibold">Error loading businesses</p>
             <p className="text-red-600 dark:text-red-300 mt-2">{error}</p>
-            <button onClick={fetchBusinessesAndCategories} className="mt-4 px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded hover:bg-red-700 dark:hover:bg-red-800">
+            <button onClick={fetchBusinessesAndCategories} className="mt-4 px-4 py-2 bg-red-600 dark:bg-red-700 text-white rounded hover:bg-red-700 dark:hover:bg-red-800 transition-colors shadow-sm">
               Try Again
             </button>
           </div>
@@ -404,7 +404,7 @@ function SearchPageContent() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white dark:bg-zinc-950">
       <SearchHeader/>
       
       <div className="bg-white dark:bg-zinc-950 shadow-sm border-b border-gray-200 dark:border-zinc-800 pt-20">
@@ -427,11 +427,11 @@ function SearchPageContent() {
                 onChange={(e) => setLocalSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleLocalSearch()}
                 placeholder="Search businesses, services, locations..."
-                className="block w-full pl-10 pr-20 py-3 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-lg focus:ring-2 focus:ring-[#00d4ad] focus:border-[#00d4ad] text-sm text-gray-900 dark:text-white"
+                className="block w-full pl-10 pr-20 py-3 border border-gray-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-lg focus:ring-2 focus:ring-[#00d4ad] focus:border-[#00d4ad] text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-zinc-500 transition-colors"
               />
               <button
                 onClick={handleLocalSearch}
-                className="absolute inset-y-0 right-0 px-4 py-2 m-1 bg-[#00d4ad] text-white rounded-md hover:bg-[#00b89a] transition-colors text-sm font-medium"
+                className="absolute inset-y-0 right-0 px-4 py-2 m-1 bg-[#00d4ad] text-white rounded-md hover:bg-[#00b89a] transition-colors text-sm font-medium shadow-sm"
               >
                 Search
               </button>
@@ -474,7 +474,7 @@ function SearchPageContent() {
 
           <div className="lg:col-span-3">
             <div className="mb-6">
-              <div className="bg-[#00d4ad]/10 dark:bg-[#00d4ad]/20 border border-[#00d4ad]/30 rounded-lg p-4">
+              <div className="bg-[#00d4ad]/10 dark:bg-[#00d4ad]/20 border border-[#00d4ad]/30 dark:border-[#00d4ad]/50 rounded-lg p-4">
                 <p className="text-sm md:text-base text-gray-900 dark:text-white">
                   <strong>Search Results for:</strong> &quot;{searchQuery}&quot; 
                   <span className="ml-2 text-gray-700 dark:text-zinc-300 block md:inline mt-1 md:mt-0">
@@ -488,30 +488,30 @@ function SearchPageContent() {
               {currentBusinesses.map((business) => (
                 <div 
                   key={business.id} 
-                  className="bg-white dark:bg-zinc-900 border border-transparent dark:border-zinc-800 rounded-lg shadow p-4 hover:shadow-lg hover:shadow-[#00d4ad]/10 transition-shadow cursor-pointer"
+                  className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg shadow hover:shadow-lg hover:shadow-[#00d4ad]/10 dark:hover:shadow-[#00d4ad]/10 transition-all p-4 cursor-pointer"
                   onClick={() => handleBusinessClick(business)}
                 >
                   <div className="flex flex-col md:flex-row gap-4 md:gap-6">
                     <div className="flex-shrink-0">
                       <img
-                        src={business.image || `https://via.placeholder.com/128x96/27272a/71717a?text=${encodeURIComponent(business.name.charAt(0))}`}
+                        src={business.image || `https://via.placeholder.com/128x96/3f3f46/a1a1aa?text=${encodeURIComponent(business.name.charAt(0))}`}
                         alt={business.name}
                         className="w-full md:w-32 h-48 md:h-24 object-cover rounded-lg"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement;
-                          target.src = `https://via.placeholder.com/128x96/27272a/71717a?text=${encodeURIComponent(business.name.charAt(0))}`;
+                          target.src = `https://via.placeholder.com/128x96/3f3f46/a1a1aa?text=${encodeURIComponent(business.name.charAt(0))}`;
                         }}
                       />
                     </div>
                     
                     <div className="flex-1 space-y-2">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white hover:text-[#00d4ad] transition-colors">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white hover:text-[#00d4ad] dark:hover:text-[#00e4bd] transition-colors">
                         {business.name}
                       </h3>
                       
                       {business.location && (
                         <div className="flex items-center gap-1 text-sm text-gray-600 dark:text-zinc-400">
-                          <MapPin size={14} />
+                          <MapPin size={14} className="flex-shrink-0" />
                           <span>{business.location}</span>
                         </div>
                       )}
@@ -526,7 +526,7 @@ function SearchPageContent() {
                         {business.openhours && (
                           <div className="flex items-center gap-1">
                             <Clock size={14} className={business.isopen ? "text-[#00d4ad]" : "text-red-600 dark:text-red-400"} />
-                            <span className={business.isopen ? "text-[#00d4ad]" : "text-red-600 dark:text-red-400"}>
+                            <span className={business.isopen ? "text-[#00d4ad] dark:text-[#00e4bd]" : "text-red-600 dark:text-red-400"}>
                               {business.isopen ? "Open" : "Closed"}
                             </span>
                           </div>
@@ -550,7 +550,7 @@ function SearchPageContent() {
                             handleWhatsAppClick(e, business);
                           }}
                           disabled={whatsappTracking[business.id]}
-                          className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-[#00d4ad] text-white rounded-md hover:bg-[#00b89a] transition-colors text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 bg-[#00d4ad] text-white rounded-md hover:bg-[#00b89a] transition-colors text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                         >
                           <MessageCircle size={18} />
                           {whatsappTracking[business.id] ? 'Tracking...' : 'WhatsApp'}
@@ -558,7 +558,7 @@ function SearchPageContent() {
                       )}
                       <button 
                         onClick={(e) => e.stopPropagation()}
-                        className="flex items-center gap-1 text-gray-600 dark:text-zinc-400 hover:text-gray-800 dark:hover:text-white text-sm"
+                        className="flex items-center gap-1 text-gray-600 dark:text-zinc-400 hover:text-[#00d4ad] dark:hover:text-[#00e4bd] text-sm transition-colors"
                       >
                         <Heart size={14} />
                         Favourite
@@ -570,7 +570,7 @@ function SearchPageContent() {
             </div>
 
             {currentBusinesses.length === 0 && (
-              <div className="text-center py-12">
+              <div className="text-center py-12 bg-white dark:bg-zinc-900 rounded-lg border border-gray-200 dark:border-zinc-800">
                 <p className="text-gray-500 dark:text-zinc-400 text-lg">
                   No businesses found for &quot;{searchQuery}&quot;.
                 </p>
@@ -579,7 +579,7 @@ function SearchPageContent() {
                 </p>
                 <button 
                   onClick={resetFilters}
-                  className="mt-4 px-4 py-2 bg-[#00d4ad] text-white rounded hover:bg-[#00b89a]"
+                  className="mt-4 px-4 py-2 bg-[#00d4ad] text-white rounded hover:bg-[#00b89a] transition-colors shadow-sm"
                 >
                   Clear Filters
                 </button>
@@ -591,7 +591,7 @@ function SearchPageContent() {
                 <button
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
-                  className="px-2 md:px-3 py-2 text-sm md:text-base text-[#00d4ad] hover:bg-[#00d4ad]/10 dark:hover:bg-[#00d4ad]/20 disabled:text-gray-400 dark:disabled:text-zinc-600 rounded"
+                  className="px-2 md:px-3 py-2 text-sm md:text-base text-[#00d4ad] dark:text-[#00e4bd] hover:bg-[#00d4ad]/10 dark:hover:bg-[#00d4ad]/20 disabled:text-gray-400 dark:disabled:text-zinc-600 rounded transition-colors"
                 >
                   « Prev
                 </button>
@@ -600,10 +600,10 @@ function SearchPageContent() {
                   <button
                     key={i + 1}
                     onClick={() => setCurrentPage(i + 1)}
-                    className={`px-2 md:px-3 py-2 text-sm md:text-base rounded ${
+                    className={`px-2 md:px-3 py-2 text-sm md:text-base rounded transition-colors ${
                       currentPage === i + 1
-                        ? "bg-[#00d4ad] text-white"
-                        : "text-[#00d4ad] hover:bg-[#00d4ad]/10 dark:hover:bg-[#00d4ad]/20"
+                        ? "bg-[#00d4ad] text-white shadow-sm"
+                        : "text-[#00d4ad] dark:text-[#00e4bd] hover:bg-[#00d4ad]/10 dark:hover:bg-[#00d4ad]/20"
                     }`}
                   >
                     {i + 1}
@@ -613,7 +613,7 @@ function SearchPageContent() {
                 <button
                   onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-2 md:px-3 py-2 text-sm md:text-base text-[#00d4ad] hover:bg-[#00d4ad]/10 dark:hover:bg-[#00d4ad]/20 disabled:text-gray-400 dark:disabled:text-zinc-600 rounded"
+                  className="px-2 md:px-3 py-2 text-sm md:text-base text-[#00d4ad] dark:text-[#00e4bd] hover:bg-[#00d4ad]/10 dark:hover:bg-[#00d4ad]/20 disabled:text-gray-400 dark:disabled:text-zinc-600 rounded transition-colors"
                 >
                   Next »
                 </button>
@@ -630,7 +630,7 @@ function SearchPageContent() {
 export default function DynamicSearchPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen">
+      <div className="min-h-screen bg-white dark:bg-zinc-950">
         <SearchHeader/>
         <div className="max-w-7xl mx-auto px-4 py-12 pt-24">
           <div className="flex justify-center items-center">

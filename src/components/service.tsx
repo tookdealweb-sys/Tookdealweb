@@ -3,12 +3,12 @@ import { Search, MapPin, Store, Bell, Shield, Zap } from 'lucide-react';
 
 export default function ServicesPage() {
   return (
-    <div className="py-16">
+    <div className="bg-white dark:bg-zinc-950 py-16 min-h-screen">
       <div className="max-w-4xl mx-auto px-6">
         
         {/* Hero */}
         <div className="mb-16">
-          <h1 className="text-5xl font-bold text-slate-900 dark:text-white mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
             Our Services
           </h1>
           <p className="text-xl text-slate-600 dark:text-zinc-400">
@@ -32,10 +32,10 @@ export default function ServicesPage() {
           </div> */}
 
           {/* Service 2 */}
-          <div className="border-l-4 border-purple-600 dark:border-purple-500 pl-6">
+          <div className="border-l-4 border-purple-600 dark:border-purple-500 pl-6 hover:bg-purple-50 dark:hover:bg-purple-950/20 transition-colors rounded-r-lg py-2 pr-4">
             <div className="flex items-center mb-3">
-              <MapPin className="w-6 h-6 text-purple-600 dark:text-purple-500 mr-3" />
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Location-Based Discovery</h2>
+              <MapPin className="w-6 h-6 text-purple-600 dark:text-purple-500 mr-3 flex-shrink-0" />
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">Location-Based Discovery</h2>
             </div>
             <p className="text-lg text-slate-700 dark:text-zinc-300 leading-relaxed">
               Discover stores and services in your neighborhood. Get accurate directions, store hours, and contact information all in one place. Navigate your city like never before.
@@ -43,10 +43,10 @@ export default function ServicesPage() {
           </div>
 
           {/* Service 3 */}
-          <div className="border-l-4 border-green-600 dark:border-green-500 pl-6">
+          <div className="border-l-4 border-green-600 dark:border-green-500 pl-6 hover:bg-green-50 dark:hover:bg-green-950/20 transition-colors rounded-r-lg py-2 pr-4">
             <div className="flex items-center mb-3">
-              <Store className="w-6 h-6 text-green-600 dark:text-green-500 mr-3" />
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Merchant Listings</h2>
+              <Store className="w-6 h-6 text-green-600 dark:text-green-500 mr-3 flex-shrink-0" />
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">Merchant Listings</h2>
             </div>
             <p className="text-lg text-slate-700 dark:text-zinc-300 leading-relaxed">
               For local businesses, we offer easy-to-manage digital storefronts. List your products, update availability, and reach customers actively searching for what you sell—all without the need for a website.
@@ -54,10 +54,10 @@ export default function ServicesPage() {
           </div>
 
           {/* Service 4 */}
-          <div className="border-l-4 border-orange-600 dark:border-orange-500 pl-6">
+          <div className="border-l-4 border-orange-600 dark:border-orange-500 pl-6 hover:bg-orange-50 dark:hover:bg-orange-950/20 transition-colors rounded-r-lg py-2 pr-4">
             <div className="flex items-center mb-3">
-              <Bell className="w-6 h-6 text-orange-600 dark:text-orange-500 mr-3" />
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Availability Alerts</h2>
+              <Bell className="w-6 h-6 text-orange-600 dark:text-orange-500 mr-3 flex-shrink-0" />
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">Availability Alerts</h2>
             </div>
             <p className="text-lg text-slate-700 dark:text-zinc-300 leading-relaxed">
               Never miss out on what you need. Set up notifications for specific products and get alerted when they become available at nearby stores. Stay informed, shop smarter.
@@ -65,10 +65,10 @@ export default function ServicesPage() {
           </div>
 
           {/* Service 5 */}
-          <div className="border-l-4 border-red-600 dark:border-red-500 pl-6">
+          <div className="border-l-4 border-red-600 dark:border-red-500 pl-6 hover:bg-red-50 dark:hover:bg-red-950/20 transition-colors rounded-r-lg py-2 pr-4">
             <div className="flex items-center mb-3">
-              <Shield className="w-6 h-6 text-red-600 dark:text-red-500 mr-3" />
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Verified Information</h2>
+              <Shield className="w-6 h-6 text-red-600 dark:text-red-500 mr-3 flex-shrink-0" />
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">Verified Information</h2>
             </div>
             <p className="text-lg text-slate-700 dark:text-zinc-300 leading-relaxed">
               Trust in accurate, up-to-date information. We work directly with merchants to ensure product availability, pricing, and store details are always current and reliable.
@@ -76,10 +76,10 @@ export default function ServicesPage() {
           </div>
 
           {/* Service 6 */}
-          <div className="border-l-4 border-indigo-600 dark:border-indigo-500 pl-6">
+          <div className="border-l-4 border-indigo-600 dark:border-indigo-500 pl-6 hover:bg-indigo-50 dark:hover:bg-indigo-950/20 transition-colors rounded-r-lg py-2 pr-4">
             <div className="flex items-center mb-3">
-              <Zap className="w-6 h-6 text-indigo-600 dark:text-indigo-500 mr-3" />
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Instant Connect</h2>
+              <Zap className="w-6 h-6 text-indigo-600 dark:text-indigo-500 mr-3 flex-shrink-0" />
+              <h2 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white">Instant Connect</h2>
             </div>
             <p className="text-lg text-slate-700 dark:text-zinc-300 leading-relaxed">
               Connect with merchants directly through our platform. Call, message, or get directions with a single tap. Make your shopping experience seamless from search to purchase.
@@ -89,7 +89,7 @@ export default function ServicesPage() {
         </div>
 
         {/* CTA Section */}
-        <div className="mt-16 bg-slate-50 dark:bg-zinc-900 border border-transparent dark:border-zinc-800 rounded-lg p-8 text-center">
+        <div className="mt-16 bg-gradient-to-br from-slate-50 to-gray-100 dark:from-zinc-900 dark:to-zinc-800 border border-gray-200 dark:border-zinc-700 rounded-lg p-8 text-center shadow-md">
           <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
             Ready to Transform Your Shopping Experience?
           </h3>

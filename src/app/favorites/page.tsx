@@ -128,7 +128,7 @@ export default function FavoritesPage() {
 
   const BusinessCard = ({ business }: { business: Business }) => (
     <div 
-      className="bg-white dark:bg-zinc-900 border border-transparent dark:border-zinc-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:shadow-[#00d4ad]/10 transition-all duration-300 group"
+      className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-zinc-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:shadow-[#00d4ad]/20 dark:hover:shadow-[#00d4ad]/10 transition-all duration-300 group"
     >
       <div 
         className="aspect-video bg-gray-200 dark:bg-zinc-800 relative overflow-hidden cursor-pointer"
@@ -140,7 +140,7 @@ export default function FavoritesPage() {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = `https://via.placeholder.com/300x200/27272a/71717a?text=${encodeURIComponent(business.name)}`;
+            target.src = `https://via.placeholder.com/300x200/3f3f46/a1a1aa?text=${encodeURIComponent(business.name)}`;
           }}
         />
         <button
@@ -148,7 +148,7 @@ export default function FavoritesPage() {
             e.stopPropagation();
             removeFavorite(business.id);
           }}
-          className="absolute top-2 right-2 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm rounded-full p-2 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors group/delete border border-transparent dark:border-red-500/30"
+          className="absolute top-2 right-2 bg-white/90 dark:bg-zinc-900/90 backdrop-blur-sm rounded-full p-2 hover:bg-red-50 dark:hover:bg-red-950/50 transition-colors group/delete border border-gray-200 dark:border-red-500/30 shadow-sm"
           title="Remove from favorites"
         >
           <Heart className="w-5 h-5 text-red-500 dark:text-red-400 fill-red-500 dark:fill-red-400 group-hover/delete:scale-110 transition-transform" />
@@ -159,7 +159,7 @@ export default function FavoritesPage() {
         className="p-4 cursor-pointer"
         onClick={() => router.push(`/business/${business.id}`)}
       >
-        <h3 className="font-semibold text-slate-800 dark:text-white mb-1 group-hover:text-[#00d4ad] transition-colors duration-200">
+        <h3 className="font-semibold text-slate-800 dark:text-white mb-1 group-hover:text-[#00d4ad] dark:group-hover:text-[#00e4bd] transition-colors duration-200">
           {business.name}
         </h3>
         
@@ -182,7 +182,7 @@ export default function FavoritesPage() {
         </div>
         
         <div className="mt-3 flex items-center justify-between">
-          <span className="text-xs text-[#00d4ad] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <span className="text-xs text-[#00d4ad] dark:text-[#00e4bd] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             View Details →
           </span>
           <button
@@ -201,17 +201,17 @@ export default function FavoritesPage() {
   );
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white dark:bg-zinc-950">
       <Header />
 
       <main className="max-w-7xl mx-auto pt-28 px-6 pb-16">
         {/* Page Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <Heart className="w-8 h-8 text-red-500 dark:text-red-400 fill-red-500 dark:fill-red-400" />
-                <h1 className="text-3xl font-bold text-slate-800 dark:text-white">My Favorites</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white">My Favorites</h1>
               </div>
               <p className="text-slate-600 dark:text-zinc-400">
                 {favoriteIds.length === 0 
@@ -224,7 +224,7 @@ export default function FavoritesPage() {
             {favoriteIds.length > 0 && !loading && (
               <button
                 onClick={clearAllFavorites}
-                className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/70 border border-transparent dark:border-red-800 transition-colors text-sm"
+                className="flex items-center gap-2 px-4 py-2 bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-100 dark:hover:bg-red-950/70 border border-red-200 dark:border-red-800 transition-colors text-sm shadow-sm"
               >
                 <Trash2 className="w-4 h-4" />
                 Clear All
@@ -255,17 +255,19 @@ export default function FavoritesPage() {
         {/* Empty State */}
         {!loading && favoriteIds.length === 0 && (
           <div className="text-center py-20">
-            <Heart className="w-16 h-16 text-gray-300 dark:text-zinc-600 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-slate-700 dark:text-zinc-300 mb-2">No favorites yet</h2>
-            <p className="text-slate-500 dark:text-zinc-400 mb-6">
-              Start exploring and save your favorite businesses!
-            </p>
-            <button
-              onClick={() => router.push('/')}
-              className="bg-[#00d4ad] text-white px-6 py-3 rounded-lg hover:bg-[#00b89a] transition-colors"
-            >
-              Browse Businesses
-            </button>
+            <div className="bg-gray-50 dark:bg-zinc-900 border-2 border-dashed border-gray-300 dark:border-zinc-700 rounded-lg p-12">
+              <Heart className="w-16 h-16 text-gray-300 dark:text-zinc-600 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-slate-700 dark:text-zinc-300 mb-2">No favorites yet</h2>
+              <p className="text-slate-500 dark:text-zinc-400 mb-6">
+                Start exploring and save your favorite businesses!
+              </p>
+              <button
+                onClick={() => router.push('/')}
+                className="bg-[#00d4ad] text-white px-6 py-3 rounded-lg hover:bg-[#00b89a] transition-colors shadow-md hover:shadow-lg"
+              >
+                Browse Businesses
+              </button>
+            </div>
           </div>
         )}
 
@@ -281,7 +283,7 @@ export default function FavoritesPage() {
                   localStorage.setItem("tookdeal:favorites", JSON.stringify([]));
                   setFavoriteIds([]);
                 }}
-                className="bg-yellow-600 dark:bg-yellow-700 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 dark:hover:bg-yellow-800 transition-colors text-sm"
+                className="bg-yellow-600 dark:bg-yellow-700 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 dark:hover:bg-yellow-800 transition-colors text-sm shadow-sm"
               >
                 Clear Invalid Favorites
               </button>
