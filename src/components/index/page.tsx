@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import {
   Search,
@@ -67,6 +67,16 @@ export default function BusinessDirectory() {
 
   const router = useRouter();
 
+  // Ref to the results section so we can auto-scroll to it
+  const resultsRef = useRef<HTMLDivElement>(null);
+
+  const scrollToResults = () => {
+    // Small timeout lets the DOM update (new filter/search) before scrolling
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  };
+
   // Fetch data from Supabase
   const { businesses: businessData, loading, error } = useBusinessData();
 
@@ -124,6 +134,12 @@ export default function BusinessDirectory() {
 
     return grouped;
   }, [businessData]);
+
+  // Handle category selection (from icon grid or dropdown) + auto-scroll
+  const handleCategorySelect = (categoryKey: string) => {
+    setSelectedCategory(categoryKey);
+    scrollToResults();
+  };
 
   // Handle search navigation
   const handleSearch = () => {
@@ -332,7 +348,10 @@ export default function BusinessDirectory() {
                 />
               </div>
               <button
-                onClick={handleSearch}
+                onClick={() => {
+                  handleSearch();
+                  scrollToResults();
+                }}
                 className="px-6 py-3 bg-[#00d4ad] text-white rounded-lg hover:bg-[#00b89a] transition-colors font-medium flex items-center gap-2 whitespace-nowrap shadow-sm hover:shadow-md"
               >
                 <Search className="w-5 h-5" />
@@ -346,7 +365,7 @@ export default function BusinessDirectory() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {/* All Categories Button */}
               <button
-                onClick={() => setSelectedCategory("all")}
+                onClick={() => handleCategorySelect("all")}
                 className={`relative overflow-hidden rounded-2xl min-h-[90px] flex items-center transition-all duration-200 shadow-sm hover:shadow-md ${
                   selectedCategory === "all"
                     ? "bg-[#00d4ad] dark:bg-[#00d4ad]"
@@ -399,7 +418,7 @@ export default function BusinessDirectory() {
                 return (
                   <button
                     key={category.key}
-                    onClick={() => !isEmpty && setSelectedCategory(category.key)}
+                    onClick={() => !isEmpty && handleCategorySelect(category.key)}
                     disabled={isEmpty}
                     className={`relative overflow-hidden rounded-2xl min-h-[90px] flex items-center transition-all duration-200 shadow-sm ${
                       isEmpty ? "opacity-50 cursor-not-allowed" : "hover:shadow-md hover:opacity-90"
@@ -441,7 +460,7 @@ export default function BusinessDirectory() {
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mb-8">
           <select
             value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
+            onChange={(e) => handleCategorySelect(e.target.value)}
             className="px-4 py-2 border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 rounded-lg focus:ring-2 focus:ring-[#00d4ad] focus:border-[#00d4ad] text-slate-700 dark:text-white w-full sm:w-auto transition-colors"
           >
             <option value="all">All Categories</option>
@@ -464,71 +483,74 @@ export default function BusinessDirectory() {
           </button>
         </div>
 
-        {/* Search Results */}
-        {searchTerm && (
-          <div className="mb-12">
-            <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white mb-6 break-words">
-              Search Results for "
-              <span className="text-[#00d4ad] dark:text-[#00e4bd]">{searchTerm}</span>"
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-              {filteredBusinesses.slice(0, 8).map((business) => (
-                <BusinessCard key={business.id} business={business} />
-              ))}
-            </div>
-            {filteredBusinesses.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-slate-500 dark:text-zinc-400 text-lg">
-                  No businesses found matching your search.
-                </p>
-                <p className="text-slate-400 dark:text-zinc-500 text-sm mt-2">
-                  Try different keywords or check your spelling.
-                </p>
+        {/* Results section — this is what we auto-scroll to */}
+        <div ref={resultsRef}>
+          {/* Search Results */}
+          {searchTerm && (
+            <div className="mb-12">
+              <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white mb-6 break-words">
+                Search Results for "
+                <span className="text-[#00d4ad] dark:text-[#00e4bd]">{searchTerm}</span>"
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                {filteredBusinesses.slice(0, 8).map((business) => (
+                  <BusinessCard key={business.id} business={business} />
+                ))}
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Business Sections - Show ALL categories */}
-        {!searchTerm && selectedCategory === "all" && (
-          <>
-            {databaseCategories.map((category) => {
-              const businesses = businessesByCategory[category] || [];
-
-              return (
-                <SectionCarousel
-                  key={category}
-                  title={category}
-                  businesses={businesses}
-                />
-              );
-            })}
-          </>
-        )}
-
-        {/* All Results when filtering */}
-        {selectedCategory !== "all" && !searchTerm && (
-          <div className="mb-12">
-            <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white mb-6">
-              Filtered Results
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-              {filteredBusinesses.map((business) => (
-                <BusinessCard key={business.id} business={business} />
-              ))}
+              {filteredBusinesses.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-slate-500 dark:text-zinc-400 text-lg">
+                    No businesses found matching your search.
+                  </p>
+                  <p className="text-slate-400 dark:text-zinc-500 text-sm mt-2">
+                    Try different keywords or check your spelling.
+                  </p>
+                </div>
+              )}
             </div>
-            {filteredBusinesses.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-slate-500 dark:text-zinc-400 text-lg">
-                  No businesses found matching your filters.
-                </p>
-                <p className="text-slate-400 dark:text-zinc-500 text-sm mt-2">
-                  Try adjusting your search criteria.
-                </p>
+          )}
+
+          {/* Business Sections - Show ALL categories */}
+          {!searchTerm && selectedCategory === "all" && (
+            <>
+              {databaseCategories.map((category) => {
+                const businesses = businessesByCategory[category] || [];
+
+                return (
+                  <SectionCarousel
+                    key={category}
+                    title={category}
+                    businesses={businesses}
+                  />
+                );
+              })}
+            </>
+          )}
+
+          {/* All Results when filtering */}
+          {selectedCategory !== "all" && !searchTerm && (
+            <div className="mb-12">
+              <h2 className="text-xl md:text-2xl font-bold text-slate-800 dark:text-white mb-6">
+                Filtered Results
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                {filteredBusinesses.map((business) => (
+                  <BusinessCard key={business.id} business={business} />
+                ))}
               </div>
-            )}
-          </div>
-        )}
+              {filteredBusinesses.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-slate-500 dark:text-zinc-400 text-lg">
+                    No businesses found matching your filters.
+                  </p>
+                  <p className="text-slate-400 dark:text-zinc-500 text-sm mt-2">
+                    Try adjusting your search criteria.
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );
